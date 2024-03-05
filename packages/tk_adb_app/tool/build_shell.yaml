@@ -1,0 +1,5 @@
+execute:
+  - flutter build linux
+  # build snap
+  - snapcraft
+  # Install snap
