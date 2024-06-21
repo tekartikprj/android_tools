@@ -7,7 +7,7 @@ import 'package:tekartik_test_menu_flutter/test_menu_flutter.dart';
 
 void main() {
   var kiosk = tekartikKioskPlugin;
-  mainMenu(() {
+  mainMenuFlutter(() {
     menu('permission', () {
       item('getPermissionInfo', () async {
         var info = await tekartikKioskPlugin.getPermissionInfo();

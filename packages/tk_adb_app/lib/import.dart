@@ -2,7 +2,7 @@
 
 export 'package:flutter/material.dart';
 export 'package:process_run/shell_run.dart';
-export 'package:rxdart/rxdart.dart' hide Notification;
+export 'package:rxdart/rxdart.dart';
 export 'package:tekartik_android_utils/adb_utils.dart';
 export 'package:tekartik_android_utils/avd_utils.dart';
 export 'package:tekartik_android_utils/build_utils.dart';

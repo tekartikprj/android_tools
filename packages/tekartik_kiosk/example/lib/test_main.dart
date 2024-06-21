@@ -6,12 +6,7 @@ import 'package:tekartik_test_menu_flutter/test.dart';
 var kiosk = tekartikKioskPlugin;
 
 void main() {
-  mainMenu(() {
-    /*
-  test('crash', () {
-    fail('fail');
-  });
-  */
+  mainMenuFlutter(() {
     group('group', () {
       test('success', () {
         expect(true, isTrue);
