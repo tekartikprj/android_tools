@@ -7,9 +7,7 @@ Basic kiosk support
 ```
   tekartik_kiosk:
     git:
-      # Soon when public
-      # url: https://gitlab.com/tekartik/flutter/android_tools
-      url: ssh://git@gitlab.com/tekartik/flutter/android_tools
+      url: https://github.com/tekartikprj/android_tools
       path: packages/tekartik_kiosk
       ref: dart3a
 ```
