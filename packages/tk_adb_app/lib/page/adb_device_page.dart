@@ -36,9 +36,10 @@ class AdbDevicePageBloc extends BaseBloc {
     var systemPackage = '-s';
     var packages = <AdbPackageInfo>[];
     Future<void> addPackages(String filter) async {
-      var lines = (await run(
-              'adb -s $serial shell cmd package list packages $filter --show-versioncode'))
-          .outLines;
+      var lines =
+          (await run(
+            'adb -s $serial shell cmd package list packages $filter --show-versioncode',
+          )).outLines;
 
       for (var line in lines) {
         var keyValues = line
@@ -60,7 +61,8 @@ class AdbDevicePageBloc extends BaseBloc {
         }
         if (name != null) {
           packages.add(
-              AdbPackageInfo(name, versionCode ?? 0, filter == systemPackage));
+            AdbPackageInfo(name, versionCode ?? 0, filter == systemPackage),
+          );
         }
       }
     }
@@ -110,20 +112,20 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
     var bloc = BlocProvider.of<AdbDevicePageBloc>(context);
     var adbDeviceInfo = bloc.adbDeviceInfo;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('ADB Device Info'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  bloc.refresh();
-                },
-                icon: const Icon(Icons.read_more))
-          ],
-        ),
-        body: ListView(children: [
-          ListTile(
-            title: Text(adbDeviceInfo.serial!),
+      appBar: AppBar(
+        title: const Text('ADB Device Info'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              bloc.refresh();
+            },
+            icon: const Icon(Icons.read_more),
           ),
+        ],
+      ),
+      body: ListView(
+        children: [
+          ListTile(title: Text(adbDeviceInfo.serial!)),
           ListTile(
             title: const Text('Kill'),
             onTap: () {
@@ -150,41 +152,49 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
                 return const Center(child: CircularProgressIndicator());
               }
               return Column(
-                children: snapshot.data!.packages.map((package) {
-                  var name = package.name;
-                  return ListTile(
-                    title: Text(name),
-                    subtitle: Text(
-                        'versionCode: ${package.versionCode}${package.system ? ', system' : ''}'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (package.system) const Text('S'),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            bloc.deletePackage(name);
-                          },
+                children:
+                    snapshot.data!.packages.map((package) {
+                      var name = package.name;
+                      return ListTile(
+                        title: Text(name),
+                        subtitle: Text(
+                          'versionCode: ${package.versionCode}${package.system ? ', system' : ''}',
                         ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (package.system) const Text('S'),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                bloc.deletePackage(name);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
               );
             },
-          )
-        ]));
+          ),
+        ],
+      ),
+    );
   }
 }
 
-Future<void> goToAdbDevicePage(BuildContext context,
-    {required AdbDeviceInfo adbDeviceInfo}) async {
+Future<void> goToAdbDevicePage(
+  BuildContext context, {
+  required AdbDeviceInfo adbDeviceInfo,
+}) async {
   await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-          builder: (context) => BlocProvider(
-                blocBuilder: () =>
-                    AdbDevicePageBloc(adbDeviceInfo: adbDeviceInfo),
-                child: const AdbDevicePage(),
-              )));
+    context,
+    MaterialPageRoute<void>(
+      builder:
+          (context) => BlocProvider(
+            blocBuilder: () => AdbDevicePageBloc(adbDeviceInfo: adbDeviceInfo),
+            child: const AdbDevicePage(),
+          ),
+    ),
+  );
 }

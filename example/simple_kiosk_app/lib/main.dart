@@ -42,8 +42,9 @@ void main() {
         write(info.length);
       });
       item('getInstalledPackageInfos (all)', () async {
-        var info = (await kiosk.getInstalledPackageInfos())
-            .map((item) => item.toMap());
+        var info = (await kiosk.getInstalledPackageInfos()).map(
+          (item) => item.toMap(),
+        );
         write(jsonPretty(info.toList())!);
         write(info.length);
       });
@@ -54,7 +55,8 @@ void main() {
           if (info.package != previousPackageName) {
             previousPackageName = info.package;
             write(
-                '${DateTime.now().toIso8601String().substring(7, 12)} $previousPackageName');
+              '${DateTime.now().toIso8601String().substring(7, 12)} $previousPackageName',
+            );
           }
           await Future<void>.delayed(const Duration(seconds: 1));
         }
@@ -81,8 +83,10 @@ void main() {
 
     menu('boot receiver', () {
       item('set', () async {
-        await tekartikKioskPlugin.setBootReceiverOptions(BootReceiverOptions()
-          ..package = (await tekartikKioskPlugin.getPackageInfo()).package);
+        await tekartikKioskPlugin.setBootReceiverOptions(
+          BootReceiverOptions()
+            ..package = (await tekartikKioskPlugin.getPackageInfo()).package,
+        );
         write('set');
       });
       item('unset', () async {

@@ -43,16 +43,12 @@ class _AvdManagerPageState extends State<AvdManagerPage> {
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of<AvdManagerPageBloc>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AVD Manager'),
-      ),
+      appBar: AppBar(title: const Text('AVD Manager')),
       body: ValueStreamBuilder<AvdManagerPageBlocState>(
         stream: bloc.state,
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
           var avdInfos = snapshot.data!.avdInfos;
           return ListView.builder(
@@ -75,10 +71,13 @@ class _AvdManagerPageState extends State<AvdManagerPage> {
 
 Future<void> goToAvdManagerPage(BuildContext context) async {
   await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-          builder: (context) => BlocProvider(
-                blocBuilder: () => AvdManagerPageBloc(),
-                child: const AvdManagerPage(),
-              )));
+    context,
+    MaterialPageRoute<void>(
+      builder:
+          (context) => BlocProvider(
+            blocBuilder: () => AvdManagerPageBloc(),
+            child: const AvdManagerPage(),
+          ),
+    ),
+  );
 }

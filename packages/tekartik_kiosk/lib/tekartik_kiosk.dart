@@ -64,8 +64,9 @@ class TekartikKioskPlugin implements TekartikKiosk {
 
   @override
   Future<PackageInfo> getPackageInfo({String? packageName}) async {
-    var result =
-        await _channel.invokeMethod('getPackageInfo', {'package': packageName});
+    var result = await _channel.invokeMethod('getPackageInfo', {
+      'package': packageName,
+    });
     // devPrint(result);
     if (result is Map) {
       return PackageInfo()..fromMap(result);

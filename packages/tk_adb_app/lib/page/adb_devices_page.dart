@@ -42,16 +42,12 @@ class _AdbDevicesPageState extends State<AdbDevicesPage> {
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of<AdbDevicesPageBloc>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ADB devices'),
-      ),
+      appBar: AppBar(title: const Text('ADB devices')),
       body: ValueStreamBuilder<AdbDevicesPageBlocState>(
         stream: bloc.state,
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
           var adbDeviceInfos = snapshot.data!.adbDeviceInfos;
           return ListView.builder(
@@ -61,8 +57,10 @@ class _AdbDevicesPageState extends State<AdbDevicesPage> {
               return ListTile(
                 title: Text(adbDeviceInfo.serial!),
                 onTap: () async {
-                  await goToAdbDevicePage(context,
-                      adbDeviceInfo: adbDeviceInfo);
+                  await goToAdbDevicePage(
+                    context,
+                    adbDeviceInfo: adbDeviceInfo,
+                  );
                   await bloc.refresh();
                 },
               );
@@ -76,10 +74,13 @@ class _AdbDevicesPageState extends State<AdbDevicesPage> {
 
 Future<void> goToAdbDevicesPage(BuildContext context) async {
   await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-          builder: (context) => BlocProvider(
-                blocBuilder: () => AdbDevicesPageBloc(),
-                child: const AdbDevicesPage(),
-              )));
+    context,
+    MaterialPageRoute<void>(
+      builder:
+          (context) => BlocProvider(
+            blocBuilder: () => AdbDevicesPageBloc(),
+            child: const AdbDevicesPage(),
+          ),
+    ),
+  );
 }

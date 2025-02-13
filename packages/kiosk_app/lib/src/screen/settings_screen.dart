@@ -13,12 +13,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      body: ListView(
-        children: const [EnableListTile()],
-      ),
+      appBar: AppBar(title: const Text('Settings')),
+      body: ListView(children: const [EnableListTile()]),
     );
   }
 }
@@ -36,23 +32,25 @@ class _EnableListTileState extends State<EnableListTile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<BootReceiverOptions>(
-        future: kiosk.getBootReceiverOptions(),
-        builder: (context, snapshot) {
-          var options = snapshot.data;
-          String? packageName;
-          if (options != null) {
-            packageName = options.package;
-            enabled = packageName != null;
-          }
-          return SwitchListTile(
-            title: (enabled ?? false)
-                ? const Text('Enabled')
-                : const Text('Disabled'),
-            subtitle: packageName != null ? Text(packageName) : null,
-            value: enabled ?? false,
-            onChanged: enabled == null
-                ? null
-                : (value) {
+      future: kiosk.getBootReceiverOptions(),
+      builder: (context, snapshot) {
+        var options = snapshot.data;
+        String? packageName;
+        if (options != null) {
+          packageName = options.package;
+          enabled = packageName != null;
+        }
+        return SwitchListTile(
+          title:
+              (enabled ?? false)
+                  ? const Text('Enabled')
+                  : const Text('Disabled'),
+          subtitle: packageName != null ? Text(packageName) : null,
+          value: enabled ?? false,
+          onChanged:
+              enabled == null
+                  ? null
+                  : (value) {
                     setState(() {
                       enabled = value;
                     });
@@ -64,10 +62,12 @@ class _EnableListTileState extends State<EnableListTile> {
                         package = packageInfo.package;
                       }
                       await kiosk.setBootReceiverOptions(
-                          BootReceiverOptions()..package = package);
+                        BootReceiverOptions()..package = package,
+                      );
                     }();
                   },
-          );
-        });
+        );
+      },
+    );
   }
 }

@@ -34,13 +34,10 @@ class _AvdPageState extends State<AvdPage> {
     var bloc = BlocProvider.of<AvdPageBloc>(context);
     var avdInfo = bloc.avdInfo;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('AVD Info'),
-        ),
-        body: ListView(children: [
-          ListTile(
-            title: Text(avdInfo.name!),
-          ),
+      appBar: AppBar(title: const Text('AVD Info')),
+      body: ListView(
+        children: [
+          ListTile(title: Text(avdInfo.name!)),
           ListTile(
             title: const Text('Start'),
             onTap: () {
@@ -52,18 +49,25 @@ class _AvdPageState extends State<AvdPage> {
             onTap: () {
               run('emulator -no-snapshot-load -avd ${avdInfo.name}');
             },
-          )
-        ]));
+          ),
+        ],
+      ),
+    );
   }
 }
 
-Future<void> goToAvdPage(BuildContext context,
-    {required AvdInfo avdInfo}) async {
+Future<void> goToAvdPage(
+  BuildContext context, {
+  required AvdInfo avdInfo,
+}) async {
   await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-          builder: (context) => BlocProvider(
-                blocBuilder: () => AvdPageBloc(avdInfo: avdInfo),
-                child: const AvdPage(),
-              )));
+    context,
+    MaterialPageRoute<void>(
+      builder:
+          (context) => BlocProvider(
+            blocBuilder: () => AvdPageBloc(avdInfo: avdInfo),
+            child: const AvdPage(),
+          ),
+    ),
+  );
 }

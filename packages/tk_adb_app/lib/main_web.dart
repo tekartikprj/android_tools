@@ -85,11 +85,7 @@ class _HomePageState extends State<HomePage> {
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ListTile(
-              title: Text('Web not supported'),
-            ),
-          ],
+          children: <Widget>[ListTile(title: Text('Web not supported'))],
         ),
       ),
     );

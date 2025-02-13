@@ -82,7 +82,7 @@ class ModeInfo {
     return {
       'kioskOn': kioskOn,
       'pinnedModeOn': pinnedOn,
-      'pinnedSupported': pinnedSupported
+      'pinnedSupported': pinnedSupported,
     };
   }
 
@@ -114,7 +114,7 @@ class PermissionInfo {
   Map<String, Object?> toMap() {
     return {
       'needPermissionForUsageStat': needPermissionForUsageStat,
-      'needOverlayPermission': needOverlayPermission
+      'needOverlayPermission': needOverlayPermission,
     };
   }
 
