@@ -38,6 +38,7 @@ class PackageInfo {
 }
 
 class BootReceiverOptions {
+  BootReceiverOptions({this.package});
   String? package;
 
   void fromMap(Map map) {

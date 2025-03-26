@@ -8,3 +8,4 @@ workspace:
   - packages/kiosk
   - packages/kiosk/example
   - packages/tk_adb_app
+  - packages/web_kiosk_app
