@@ -65,7 +65,7 @@ dependencies:
       url: https://github.com/tekartik/app_flutter_utils.dart
       ref: dart3a
       path: app_widget
-  flutter_screen_lock:
+  flutter_screen_lock: ">=9.2.1"
 dev_dependencies:
   flutter_test:
     sdk: flutter
