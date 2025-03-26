@@ -1,0 +1,10 @@
+name: _
+publish_to: none
+environment:
+  sdk: ^3.7.0
+workspace:
+  - example/simple_kiosk_app
+  - packages/kiosk_app
+  - packages/kiosk
+  - packages/kiosk/example
+  - packages/tk_adb_app

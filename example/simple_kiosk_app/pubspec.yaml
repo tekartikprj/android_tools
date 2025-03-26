@@ -36,10 +36,8 @@ dependencies:
     version: '>=0.2.3'
   tekartik_kiosk:
     git:
-      # Soon when public
-      # url: https://gitlab.com/tekartik/flutter/android_tools
-      url: ssh://git@gitlab.com/tekartik/flutter/android_tools
-      path: packages/tekartik_kiosk
+      url: https://github.com/tekartikprj/android_tools
+      path: packages/kiosk
       ref: dart3a
 dev_dependencies:
   flutter_test:
@@ -60,6 +58,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+resolution: workspace
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -92,6 +91,3 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-dependency_overrides:
-  tekartik_kiosk:
-    path: ../../packages/tekartik_kiosk

@@ -3,3 +3,7 @@
 .vscode/
 
 .local/
+pubspec.lock
+pubspec_overrides.yaml
+.flutter*
+.dart_tool/

@@ -23,8 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  tekartik_kiosk:
-    path: ../tekartik_kiosk
   tekartik_app_common_utils:
     git:
       url: https://github.com/tekartik/app_common_utils.dart
@@ -38,6 +36,11 @@ dependencies:
       ref: dart3a
       path: app_bloc
     version: '>=0.1.0'
+  tekartik_kiosk:
+    git:
+      url: https://github.com/tekartikprj/android_tools
+      path: packages/kiosk
+      ref: dart3a
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ">=1.0.8"
@@ -45,6 +48,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   tekartik_app_lints_flutter:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
@@ -61,6 +65,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+resolution: workspace
 
   # To add assets to your application, add an assets section, like this:
   # assets:
