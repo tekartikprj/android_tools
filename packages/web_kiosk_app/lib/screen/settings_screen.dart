@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tekartik_app_flutter_widget/mini_ui.dart';
+import 'package:tekartik_app_flutter_widget/view/tile_padding.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk_api.dart';
@@ -19,6 +20,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends AutoDisposeBaseState<SettingsScreen>
     with AutoDisposedBusyScreenStateMixin {
+  TextEditingController? _urlController;
+  TextEditingController? _passcodeController;
   @override
   void initState() {
     // TODO: implement initState
@@ -32,112 +35,160 @@ class _SettingsScreenState extends AutoDisposeBaseState<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: globalWebKioskDb.onGeneral(),
-      builder: (context, snapshot) {
-        return Scaffold(
-          appBar: AppBar(title: const Text('Settings')),
-          body: Stack(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  var dbPrefGeneral = snapshot.data!;
-                  return ListView(
-                    children: [
-                      const SizedBox(height: 8),
-                      ValueStreamBuilder(
-                        stream: busyStream,
-                        builder: (context, snapshot) {
-                          var busy = snapshot.data ?? false;
-                          return SwitchListTile(
-                            value: dbPrefGeneral.on.v ?? false,
-                            onChanged:
-                                busy
-                                    ? null
-                                    : (on) async {
-                                      await busyAction(() async {
-                                        var info =
-                                            await tekartikKioskPlugin
-                                                .getPermissionInfo();
-                                        // ignore: avoid_print
-                                        print(info);
-                                        if (on) {
-                                          var pkgInfo =
-                                              await tekartikKioskPlugin
-                                                  .getPackageInfo();
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+
+        if (context.mounted) {
+          Navigator.of(context).pop(result);
+        }
+      },
+      child: StreamBuilder(
+        stream: globalWebKioskDb.onGeneral(),
+        builder: (context, snapshot) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Settings')),
+            body: Stack(
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    var dbPrefGeneral = snapshot.data!;
+                    _urlController ??= audiAddTextEditingController(
+                      TextEditingController(text: dbPrefGeneral.url.v),
+                    );
+                    _passcodeController = audiAddTextEditingController(
+                      TextEditingController(text: dbPrefGeneral.passcodeValue),
+                    );
+                    return ListView(
+                      children: [
+                        const SizedBox(height: 8),
+                        ValueStreamBuilder(
+                          stream: busyStream,
+                          builder: (context, snapshot) {
+                            var busy = snapshot.data ?? false;
+                            return SwitchListTile(
+                              value: dbPrefGeneral.on.v ?? false,
+                              onChanged:
+                                  busy
+                                      ? null
+                                      : (on) async {
+                                        await busyAction(() async {
                                           var info =
                                               await tekartikKioskPlugin
                                                   .getPermissionInfo();
-                                          if (info.needPermissionForUsageStat) {
-                                            info =
+                                          // ignore: avoid_print
+                                          print(info);
+                                          if (on) {
+                                            var pkgInfo =
                                                 await tekartikKioskPlugin
-                                                    .requestPermissionForUsageStat();
+                                                    .getPackageInfo();
+                                            var info =
+                                                await tekartikKioskPlugin
+                                                    .getPermissionInfo();
                                             if (info
                                                 .needPermissionForUsageStat) {
-                                              if (context.mounted) {
-                                                await muiSnack(
-                                                  context,
-                                                  'You need to enable usage stat permission',
-                                                );
+                                              info =
+                                                  await tekartikKioskPlugin
+                                                      .requestPermissionForUsageStat();
+                                              if (info
+                                                  .needPermissionForUsageStat) {
+                                                if (context.mounted) {
+                                                  await muiSnack(
+                                                    context,
+                                                    'You need to enable usage stat permission',
+                                                  );
+                                                }
+                                                return;
                                               }
-                                              return;
                                             }
-                                          }
-                                          if (info.needOverlayPermission) {
-                                            info =
-                                                await tekartikKioskPlugin
-                                                    .requestOverlayPermission();
                                             if (info.needOverlayPermission) {
-                                              if (context.mounted) {
-                                                await muiSnack(
-                                                  context,
-                                                  'You need to enable overlay permission',
-                                                );
+                                              info =
+                                                  await tekartikKioskPlugin
+                                                      .requestOverlayPermission();
+                                              if (info.needOverlayPermission) {
+                                                if (context.mounted) {
+                                                  await muiSnack(
+                                                    context,
+                                                    'You need to enable overlay permission',
+                                                  );
+                                                }
+                                                return;
                                               }
-                                              return;
                                             }
+                                            // ignore: avoid_print
+                                            print(
+                                              'setting boot receiver on ${pkgInfo.package}',
+                                            );
+                                            await tekartikKioskPlugin
+                                                .setBootReceiverOptions(
+                                                  BootReceiverOptions(
+                                                    package: pkgInfo.package,
+                                                  ),
+                                                );
+                                            //var overlayInfo = await tekartikKioskPlugin.requestOverlayPermission();
+                                            //if (overlayInfo.)
+                                          } else {
+                                            await tekartikKioskPlugin
+                                                .setBootReceiverOptions(
+                                                  BootReceiverOptions(),
+                                                );
                                           }
-                                          // ignore: avoid_print
-                                          print(
-                                            'setting boot receiver on ${pkgInfo.package}',
+                                          dbPrefGeneral.on.v = on;
+                                          await sleep(1000);
+                                          await globalWebKioskDb.setGeneral(
+                                            dbPrefGeneral,
                                           );
-                                          await tekartikKioskPlugin
-                                              .setBootReceiverOptions(
-                                                BootReceiverOptions(
-                                                  package: pkgInfo.package,
-                                                ),
-                                              );
-                                          //var overlayInfo = await tekartikKioskPlugin.requestOverlayPermission();
-                                          //if (overlayInfo.)
-                                        } else {
-                                          await tekartikKioskPlugin
-                                              .setBootReceiverOptions(
-                                                BootReceiverOptions(),
-                                              );
-                                        }
-                                        dbPrefGeneral.on.v = on;
-                                        await sleep(1000);
-                                        await globalWebKioskDb.setGeneral(
-                                          dbPrefGeneral,
-                                        );
-                                      });
-                                    },
-                            title: const Text('Web kiosk enabled'),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
-              BusyIndicator(busy: busyStream),
-            ],
-          ),
-        );
-      },
+                                        });
+                                      },
+                              title: const Text('Web kiosk enabled'),
+                            );
+                          },
+                        ),
+                        const TilePadding(child: Divider()),
+                        TextField(
+                          controller: _urlController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(label: Text('URL')),
+                        ),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: _passcodeController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(
+                            label: Text('Passcode (4 digits)'),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                BusyIndicator(busy: busyStream),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                if (_urlController != null) {
+                  var dbPrefGeneral = globalWebKioskDb.getGeneral();
+                  dbPrefGeneral.url.v = _urlController!.text;
+                  dbPrefGeneral.passcode.v = _passcodeController!.text;
+                  await globalWebKioskDb.setGeneral(dbPrefGeneral);
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                }
+              },
+              child: const Icon(Icons.check),
+            ),
+          );
+        },
+      ),
     );
   }
 }

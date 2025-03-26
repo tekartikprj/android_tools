@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tekartik_common_utils/async_utils.dart';
 
 import 'package:tekartik_web_kiosk_app/import/import_flutter.dart';
 import 'package:tekartik_web_kiosk_app/screen/settings_screen.dart';
@@ -8,8 +9,11 @@ import 'package:tekartik_web_kiosk_app/screen/web_kiosk_screen_bloc.dart';
 
 /// Start screen
 class StartScreen extends StatefulWidget {
+  /// Prevent auto start
+  final bool? noAutoStart;
+
   /// Constructor
-  const StartScreen({super.key});
+  const StartScreen({super.key, this.noAutoStart});
 
   @override
   State<StartScreen> createState() => _StartScreenState();
@@ -28,6 +32,19 @@ class _StartScreenState extends State<StartScreen> {
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
+              var state = snapshot.data!;
+              if (state.dbPrefsGeneral.on.v ?? false) {
+                sleep(0).then((_) {
+                  if (firstStart) {
+                    firstStart = false;
+                    if (widget.noAutoStart != true) {
+                      if (context.mounted) {
+                        _goToWebKioskScreen(context);
+                      }
+                    }
+                  }
+                });
               }
               return Center(
                 child: ListView(
@@ -72,7 +89,7 @@ class _StartScreenState extends State<StartScreen> {
   }
 
   Future<void> _goToWebKioskScreen(BuildContext context) async {
-    await Navigator.of(context).push(
+    await Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(
         builder:
             (context) => BlocProvider(
@@ -80,6 +97,7 @@ class _StartScreenState extends State<StartScreen> {
               child: const WebKioskScreen(),
             ),
       ),
+      (_) => false,
     );
   }
 
@@ -88,4 +106,21 @@ class _StartScreenState extends State<StartScreen> {
       MaterialPageRoute<void>(builder: (context) => const SettingsScreen()),
     );
   }
+}
+
+/// Restart
+Future<void> popAllToStartScreen(
+  BuildContext context, {
+  bool? noAutoStart,
+}) async {
+  await Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute<void>(
+      builder:
+          (context) => BlocProvider(
+            blocBuilder: () => StartScreenBloc(),
+            child: StartScreen(noAutoStart: noAutoStart),
+          ),
+    ),
+    (_) => false,
+  );
 }
