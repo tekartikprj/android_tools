@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kiosk_app/src/screen/settings_screen.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk.dart';
+import 'package:tekartik_kiosk_app/src/screen/settings_screen.dart';
 
 var kiosk = tekartikKioskPlugin;
 void main() {

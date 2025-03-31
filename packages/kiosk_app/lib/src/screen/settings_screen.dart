@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kiosk_app/main.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk_api.dart';
+import 'package:tekartik_kiosk_app/main.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
