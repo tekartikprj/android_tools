@@ -36,10 +36,9 @@ class AdbDevicePageBloc extends BaseBloc {
     var systemPackage = '-s';
     var packages = <AdbPackageInfo>[];
     Future<void> addPackages(String filter) async {
-      var lines =
-          (await run(
-            'adb -s $serial shell cmd package list packages $filter --show-versioncode',
-          )).outLines;
+      var lines = (await run(
+        'adb -s $serial shell cmd package list packages $filter --show-versioncode',
+      )).outLines;
 
       for (var line in lines) {
         var keyValues = line
@@ -152,28 +151,27 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
                 return const Center(child: CircularProgressIndicator());
               }
               return Column(
-                children:
-                    snapshot.data!.packages.map((package) {
-                      var name = package.name;
-                      return ListTile(
-                        title: Text(name),
-                        subtitle: Text(
-                          'versionCode: ${package.versionCode}${package.system ? ', system' : ''}',
+                children: snapshot.data!.packages.map((package) {
+                  var name = package.name;
+                  return ListTile(
+                    title: Text(name),
+                    subtitle: Text(
+                      'versionCode: ${package.versionCode}${package.system ? ', system' : ''}',
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (package.system) const Text('S'),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            bloc.deletePackage(name);
+                          },
                         ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (package.system) const Text('S'),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                bloc.deletePackage(name);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                      ],
+                    ),
+                  );
+                }).toList(),
               );
             },
           ),
@@ -190,11 +188,10 @@ Future<void> goToAdbDevicePage(
   await Navigator.push(
     context,
     MaterialPageRoute<void>(
-      builder:
-          (context) => BlocProvider(
-            blocBuilder: () => AdbDevicePageBloc(adbDeviceInfo: adbDeviceInfo),
-            child: const AdbDevicePage(),
-          ),
+      builder: (context) => BlocProvider(
+        blocBuilder: () => AdbDevicePageBloc(adbDeviceInfo: adbDeviceInfo),
+        child: const AdbDevicePage(),
+      ),
     ),
   );
 }

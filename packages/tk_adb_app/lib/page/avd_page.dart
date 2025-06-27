@@ -63,11 +63,10 @@ Future<void> goToAvdPage(
   await Navigator.push(
     context,
     MaterialPageRoute<void>(
-      builder:
-          (context) => BlocProvider(
-            blocBuilder: () => AvdPageBloc(avdInfo: avdInfo),
-            child: const AvdPage(),
-          ),
+      builder: (context) => BlocProvider(
+        blocBuilder: () => AvdPageBloc(avdInfo: avdInfo),
+        child: const AvdPage(),
+      ),
     ),
   );
 }

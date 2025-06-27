@@ -41,31 +41,29 @@ class _EnableListTileState extends State<EnableListTile> {
           enabled = packageName != null;
         }
         return SwitchListTile(
-          title:
-              (enabled ?? false)
-                  ? const Text('Enabled')
-                  : const Text('Disabled'),
+          title: (enabled ?? false)
+              ? const Text('Enabled')
+              : const Text('Disabled'),
           subtitle: packageName != null ? Text(packageName) : null,
           value: enabled ?? false,
-          onChanged:
-              enabled == null
-                  ? null
-                  : (value) {
-                    setState(() {
-                      enabled = value;
-                    });
-                    () async {
-                      String? package;
-                      if (value) {
-                        var packageInfo = await kiosk.getPackageInfo();
-                        //devPrint(packageInfo);
-                        package = packageInfo.package;
-                      }
-                      await kiosk.setBootReceiverOptions(
-                        BootReceiverOptions()..package = package,
-                      );
-                    }();
-                  },
+          onChanged: enabled == null
+              ? null
+              : (value) {
+                  setState(() {
+                    enabled = value;
+                  });
+                  () async {
+                    String? package;
+                    if (value) {
+                      var packageInfo = await kiosk.getPackageInfo();
+                      //devPrint(packageInfo);
+                      package = packageInfo.package;
+                    }
+                    await kiosk.setBootReceiverOptions(
+                      BootReceiverOptions()..package = package,
+                    );
+                  }();
+                },
         );
       },
     );

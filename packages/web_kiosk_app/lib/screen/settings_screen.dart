@@ -74,78 +74,72 @@ class _SettingsScreenState extends AutoDisposeBaseState<SettingsScreen>
                             var busy = snapshot.data ?? false;
                             return SwitchListTile(
                               value: dbPrefGeneral.on.v ?? false,
-                              onChanged:
-                                  busy
-                                      ? null
-                                      : (on) async {
-                                        await busyAction(() async {
-                                          var info =
+                              onChanged: busy
+                                  ? null
+                                  : (on) async {
+                                      await busyAction(() async {
+                                        var info = await tekartikKioskPlugin
+                                            .getPermissionInfo();
+                                        // ignore: avoid_print
+                                        print(info);
+                                        if (on) {
+                                          var pkgInfo =
                                               await tekartikKioskPlugin
-                                                  .getPermissionInfo();
-                                          // ignore: avoid_print
-                                          print(info);
-                                          if (on) {
-                                            var pkgInfo =
-                                                await tekartikKioskPlugin
-                                                    .getPackageInfo();
-                                            var info =
-                                                await tekartikKioskPlugin
-                                                    .getPermissionInfo();
+                                                  .getPackageInfo();
+                                          var info = await tekartikKioskPlugin
+                                              .getPermissionInfo();
+                                          if (info.needPermissionForUsageStat) {
+                                            info = await tekartikKioskPlugin
+                                                .requestPermissionForUsageStat();
                                             if (info
                                                 .needPermissionForUsageStat) {
-                                              info =
-                                                  await tekartikKioskPlugin
-                                                      .requestPermissionForUsageStat();
-                                              if (info
-                                                  .needPermissionForUsageStat) {
-                                                if (context.mounted) {
-                                                  await muiSnack(
-                                                    context,
-                                                    'You need to enable usage stat permission',
-                                                  );
-                                                }
-                                                return;
-                                              }
-                                            }
-                                            if (info.needOverlayPermission) {
-                                              info =
-                                                  await tekartikKioskPlugin
-                                                      .requestOverlayPermission();
-                                              if (info.needOverlayPermission) {
-                                                if (context.mounted) {
-                                                  await muiSnack(
-                                                    context,
-                                                    'You need to enable overlay permission',
-                                                  );
-                                                }
-                                                return;
-                                              }
-                                            }
-                                            // ignore: avoid_print
-                                            print(
-                                              'setting boot receiver on ${pkgInfo.package}',
-                                            );
-                                            await tekartikKioskPlugin
-                                                .setBootReceiverOptions(
-                                                  BootReceiverOptions(
-                                                    package: pkgInfo.package,
-                                                  ),
+                                              if (context.mounted) {
+                                                await muiSnack(
+                                                  context,
+                                                  'You need to enable usage stat permission',
                                                 );
-                                            //var overlayInfo = await tekartikKioskPlugin.requestOverlayPermission();
-                                            //if (overlayInfo.)
-                                          } else {
-                                            await tekartikKioskPlugin
-                                                .setBootReceiverOptions(
-                                                  BootReceiverOptions(),
-                                                );
+                                              }
+                                              return;
+                                            }
                                           }
-                                          dbPrefGeneral.on.v = on;
-                                          await sleep(1000);
-                                          await globalWebKioskDb.setGeneral(
-                                            dbPrefGeneral,
+                                          if (info.needOverlayPermission) {
+                                            info = await tekartikKioskPlugin
+                                                .requestOverlayPermission();
+                                            if (info.needOverlayPermission) {
+                                              if (context.mounted) {
+                                                await muiSnack(
+                                                  context,
+                                                  'You need to enable overlay permission',
+                                                );
+                                              }
+                                              return;
+                                            }
+                                          }
+                                          // ignore: avoid_print
+                                          print(
+                                            'setting boot receiver on ${pkgInfo.package}',
                                           );
-                                        });
-                                      },
+                                          await tekartikKioskPlugin
+                                              .setBootReceiverOptions(
+                                                BootReceiverOptions(
+                                                  package: pkgInfo.package,
+                                                ),
+                                              );
+                                          //var overlayInfo = await tekartikKioskPlugin.requestOverlayPermission();
+                                          //if (overlayInfo.)
+                                        } else {
+                                          await tekartikKioskPlugin
+                                              .setBootReceiverOptions(
+                                                BootReceiverOptions(),
+                                              );
+                                        }
+                                        dbPrefGeneral.on.v = on;
+                                        await sleep(1000);
+                                        await globalWebKioskDb.setGeneral(
+                                          dbPrefGeneral,
+                                        );
+                                      });
+                                    },
                               title: const Text('Web kiosk enabled'),
                             );
                           },

@@ -76,11 +76,10 @@ Future<void> goToAdbDevicesPage(BuildContext context) async {
   await Navigator.push(
     context,
     MaterialPageRoute<void>(
-      builder:
-          (context) => BlocProvider(
-            blocBuilder: () => AdbDevicesPageBloc(),
-            child: const AdbDevicesPage(),
-          ),
+      builder: (context) => BlocProvider(
+        blocBuilder: () => AdbDevicesPageBloc(),
+        child: const AdbDevicesPage(),
+      ),
     ),
   );
 }

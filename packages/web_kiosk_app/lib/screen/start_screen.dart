@@ -91,11 +91,10 @@ class _StartScreenState extends State<StartScreen> {
   Future<void> _goToWebKioskScreen(BuildContext context) async {
     await Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(
-        builder:
-            (context) => BlocProvider(
-              blocBuilder: () => WebKioskScreenBloc(),
-              child: const WebKioskScreen(),
-            ),
+        builder: (context) => BlocProvider(
+          blocBuilder: () => WebKioskScreenBloc(),
+          child: const WebKioskScreen(),
+        ),
       ),
       (_) => false,
     );
@@ -115,11 +114,10 @@ Future<void> popAllToStartScreen(
 }) async {
   await Navigator.of(context).pushAndRemoveUntil(
     MaterialPageRoute<void>(
-      builder:
-          (context) => BlocProvider(
-            blocBuilder: () => StartScreenBloc(),
-            child: StartScreen(noAutoStart: noAutoStart),
-          ),
+      builder: (context) => BlocProvider(
+        blocBuilder: () => StartScreenBloc(),
+        child: StartScreen(noAutoStart: noAutoStart),
+      ),
     ),
     (_) => false,
   );

@@ -73,11 +73,10 @@ Future<void> goToAvdManagerPage(BuildContext context) async {
   await Navigator.push(
     context,
     MaterialPageRoute<void>(
-      builder:
-          (context) => BlocProvider(
-            blocBuilder: () => AvdManagerPageBloc(),
-            child: const AvdManagerPage(),
-          ),
+      builder: (context) => BlocProvider(
+        blocBuilder: () => AvdManagerPageBloc(),
+        child: const AvdManagerPage(),
+      ),
     ),
   );
 }
