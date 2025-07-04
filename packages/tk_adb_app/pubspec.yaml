@@ -57,7 +57,11 @@ dependencies:
     git:
       url: https://github.com/tekartik/android_utils.dart
       ref: dart3a
-    version: '>=0.1.0'
+  festenao_common_flutter:
+    git:
+      url: https://github.com/tekaly/festenao
+      ref: dart3a
+      path: packages_flutter/festenao_common_flutter
 dev_dependencies:
   tekartik_build_menu_flutter:
     git:

@@ -1,4 +1,7 @@
+import 'package:festenao_common_flutter/common_utils_widget.dart';
 import 'package:tk_adb_app/import.dart';
+
+import 'adb_package_screen.dart';
 
 class AdbPackageInfo {
   final String name;
@@ -158,14 +161,23 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
                     subtitle: Text(
                       'versionCode: ${package.versionCode}${package.system ? ', system' : ''}',
                     ),
+                    onTap: () async {
+                      await goToAdbPackageScreen(
+                        context,
+                        deviceSerial: adbDeviceInfo.serial!,
+                        packageName: name,
+                      );
+                    },
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (package.system) const Text('S'),
                         IconButton(
                           icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            bloc.deletePackage(name);
+                          onPressed: () async {
+                            if (await muiConfirm(context)) {
+                              await bloc.deletePackage(name);
+                            }
                           },
                         ),
                       ],
