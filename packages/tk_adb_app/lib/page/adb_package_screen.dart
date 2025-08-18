@@ -39,16 +39,18 @@ class _AdbPackageScreenState extends State<AdbPackageScreen> {
                         title: Text('Version code: ${pkgInfo.versionCode}'),
                       ),
                       ListTile(
-                        title: Text('Min SDK version: ${pkgInfo.minSdkVersion}'),
+                        title: Text(
+                          'Min SDK version: ${pkgInfo.minSdkVersion}',
+                        ),
                       ),
                       ListTile(
-                        title: Text('Target SDK version: ${pkgInfo.targetSdkVersion}'),
+                        title: Text(
+                          'Target SDK version: ${pkgInfo.targetSdkVersion}',
+                        ),
                       ),
                     ] else
                       const ListTile(title: Text('No package info found')),
-                
                   ],
-                
                 ),
               ),
             ],
@@ -59,12 +61,19 @@ class _AdbPackageScreenState extends State<AdbPackageScreen> {
   }
 }
 
-Future<void> goToAdbPackageScreen(BuildContext context, {required String deviceSerial, required String packageName}) async {
+Future<void> goToAdbPackageScreen(
+  BuildContext context, {
+  required String deviceSerial,
+  required String packageName,
+}) async {
   await Navigator.push(
     context,
     MaterialPageRoute<void>(
       builder: (context) => BlocProvider(
-        blocBuilder: () => AdbPackageScreenBloc(deviceSerial: deviceSerial, packageName: packageName),
+        blocBuilder: () => AdbPackageScreenBloc(
+          deviceSerial: deviceSerial,
+          packageName: packageName,
+        ),
         child: const AdbPackageScreen(),
       ),
     ),
