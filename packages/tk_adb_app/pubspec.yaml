@@ -32,41 +32,34 @@ dependencies:
   tekartik_app_rx_utils:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_rx_utils
     version: '>=0.1.0'
   tekartik_app_flutter_sembast:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
       path: app_sembast
-      ref: dart3a
     version: '>=0.3.0'
   tekartik_app_platform:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_platform
     version: '>=0.1.0'
   tekartik_app_flutter_bloc:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_bloc
     version: '>=0.2.2'
   tekartik_android_utils:
     git:
       url: https://github.com/tekartik/android_utils.dart
-      ref: dart3a
   festenao_common_flutter:
     git:
       url: https://github.com/tekaly/festenao
-      ref: dart3a
       path: packages_flutter/festenao_common_flutter
 dev_dependencies:
   tekartik_build_menu_flutter:
     git:
       url: https://github.com/tekartik/build_flutter.dart
-      ref: dart3a
       path: packages/build_menu_flutter
     version: '>=0.1.0'
   flutter_test:
@@ -74,7 +67,6 @@ dev_dependencies:
   tekartik_app_lints_flutter:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_lints
     version: '>=0.1.0'
 dependency_overrides:

@@ -26,21 +26,18 @@ dependencies:
   tekartik_app_common_utils:
     git:
       url: https://github.com/tekartik/app_common_utils.dart
-      ref: dart3a
       path: app
     version: '>=0.1.4'
   rxdart:
   tekartik_app_bloc:
     git:
       url: https://github.com/tekartik/app_common_utils.dart
-      ref: dart3a
       path: app_bloc
     version: '>=0.1.0'
   tekartik_kiosk:
     git:
       url: https://github.com/tekartikprj/android_tools
       path: packages/kiosk
-      ref: dart3a
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ">=1.0.8"
@@ -52,7 +49,6 @@ dev_dependencies:
   tekartik_app_lints_flutter:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_lints
     version: '>=0.1.0'
 # For information on the generic Dart part of this file, see the

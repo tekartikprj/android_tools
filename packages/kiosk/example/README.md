@@ -7,7 +7,6 @@ Demonstrates how to use the tekartik_kiosk plugin.
 ```
   tekartik_kiosk:
       url: https://github.com/tekartikprj/android_tools
-      ref: dart3a
       path: packages/tekartik_kiosk
 ```
 

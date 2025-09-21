@@ -31,21 +31,18 @@ dependencies:
   tekartik_test_menu_flutter:
     git:
       url: https://github.com/tekartik/test_menu_flutter
-      ref: dart3a
       path: test_menu_flutter
     version: '>=0.2.3'
   tekartik_kiosk:
     git:
       url: https://github.com/tekartikprj/android_tools
       path: packages/kiosk
-      ref: dart3a
 dev_dependencies:
   flutter_test:
     sdk: flutter
   tekartik_app_lints_flutter:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_lints
     version: '>=0.1.0'
 # For information on the generic Dart part of this file, see the

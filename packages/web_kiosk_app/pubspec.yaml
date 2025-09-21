@@ -39,31 +39,25 @@ dependencies:
   tekartik_kiosk:
     git:
       url: https://github.com/tekartikprj/android_tools
-      ref: dart3a
       path: packages/kiosk
   tekartik_app_flutter_sembast:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_sembast
   tekartik_app_cv_sembast:
     git:
       url: https://github.com/tekartik/app_common_utils.dart
-      ref: dart3a
       path: app_cv_sembast
   tkcms_user_app:
     git:
       url: https://github.com/tekartikprj/tkcms.git
-      ref: dart3a
       path: flutter_packages/tkcms_user_app
   tekartik_common_utils:
     git:
       url: https://github.com/tekartik/common_utils.dart
-      ref: dart3a
   tekartik_app_flutter_widget:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
-      ref: dart3a
       path: app_widget
   flutter_screen_lock: ">=9.2.1"
 dev_dependencies:

@@ -9,7 +9,6 @@ Basic kiosk support
     git:
       url: https://github.com/tekartikprj/android_tools
       path: packages/tekartik_kiosk
-      ref: dart3a
 ```
 
 Set activity class from java code
