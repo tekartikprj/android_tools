@@ -34,8 +34,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ">=1.0.8"
-  google_fonts: ">=6.2.1"
-  webview_flutter: ">=4.0.0"
+  google_fonts: ">=6.3.2"
+  webview_flutter: ">=4.13.0"
   tekartik_kiosk:
     git:
       url: https://github.com/tekartikprj/android_tools
@@ -59,7 +59,7 @@ dependencies:
     git:
       url: https://github.com/tekartik/app_flutter_utils.dart
       path: app_widget
-  flutter_screen_lock: ">=9.2.1"
+  flutter_screen_lock: ">=9.2.2+2"
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -69,7 +69,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ">=5.0.0"
+  flutter_lints: ">=6.0.0"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
