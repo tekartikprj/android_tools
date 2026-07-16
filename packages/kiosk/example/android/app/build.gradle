@@ -23,6 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    namespace "com.example.tekartik_kiosk_example"
     compileSdkVersion 34
 
     defaultConfig {
