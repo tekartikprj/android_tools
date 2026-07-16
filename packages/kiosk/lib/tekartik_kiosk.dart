@@ -110,8 +110,23 @@ class TekartikKioskPlugin implements TekartikKiosk {
   }
 
   @override
-  Future<void> startKioskMode() async {
-    await _channel.invokeMethod('startKioskMode');
+  Future<void> setKioskOptions(KioskOptions options) async {
+    await _channel.invokeMethod('setKioskOptions', options.toMap());
+  }
+
+  @override
+  Future<KioskOptions> getKioskOptions() async {
+    var result = await _channel.invokeMethod('getKioskOptions');
+    if (result is Map) {
+      return KioskOptions()..fromMap(result);
+    } else {
+      throw ArgumentError.value(result);
+    }
+  }
+
+  @override
+  Future<void> startKioskMode({KioskOptions? options}) async {
+    await _channel.invokeMethod('startKioskMode', options?.toMap());
   }
 
   @override

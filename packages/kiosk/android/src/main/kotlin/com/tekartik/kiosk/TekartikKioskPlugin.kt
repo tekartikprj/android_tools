@@ -101,6 +101,8 @@ class TekartikKioskPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "getInstalledPackageInfos" -> handleGetInstalledPackageInfos(methodInfo)
             "setBootReceiverOptions" -> handleSetBootReceiverOptions(methodInfo)
             "getBootReceiverOptions" -> handleGetBootReceiverOptions(methodInfo)
+            "setKioskOptions" -> handleSetKioskOptions(methodInfo)
+            "getKioskOptions" -> handleGetKioskOptions(methodInfo)
             "startKioskMode" -> handleStartKioskMode(methodInfo)
             "stopKioskMode" -> handleStopKioskMode(methodInfo)
             "startPinnedMode" -> handleStartPinnedMode(methodInfo)
@@ -207,8 +209,32 @@ class TekartikKioskPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
+    private fun handleSetKioskOptions(methodInfo: MethodInfo) {
+        try {
+            val map = methodInfo.call.arguments as? Map<*, *>
+                ?: throw IllegalArgumentException("Missing options map")
+            KioskOptions.save(context, KioskOptions.fromMap(map))
+            methodInfo.success(null)
+        } catch (e: Exception) {
+            handleException(methodInfo, e)
+        }
+    }
+
+    private fun handleGetKioskOptions(methodInfo: MethodInfo) {
+        try {
+            methodInfo.success(KioskOptions.load(context).toMap())
+        } catch (e: Exception) {
+            handleException(methodInfo, e)
+        }
+    }
+
     private fun handleStartKioskMode(methodInfo: MethodInfo) {
         try {
+            // Options can be set at the same time as starting kiosk mode
+            val map = methodInfo.call.arguments as? Map<*, *>
+            if (map != null) {
+                KioskOptions.save(context, KioskOptions.fromMap(map))
+            }
             KioskUtils.startKioskMode(context)
             methodInfo.success(null)
         } catch (e: Exception) {

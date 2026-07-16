@@ -53,6 +53,48 @@ class BootReceiverOptions {
   String toString() => toMap().toString();
 }
 
+/// Default native watchdog check frequency in milliseconds.
+const kioskCheckDelayMsDefault = 400;
+
+/// Native watchdog options.
+///
+/// When [package] is set, the native watchdog relaunches it whenever an app
+/// not part of the allowed list is in the foreground. The kiosk app itself
+/// is always allowed. When [package] is null the legacy behavior applies
+/// (the kiosk app itself is restored when in the background).
+class KioskOptions {
+  /// Main package the watchdog keeps in the foreground.
+  String? package;
+
+  /// Extra packages allowed in the foreground during the watchdog.
+  List<String>? allowedPackages;
+
+  /// Watchdog check frequency in milliseconds (default 400).
+  int? checkDelayMs;
+
+  KioskOptions({this.package, this.allowedPackages, this.checkDelayMs});
+
+  void fromMap(Map map) {
+    package = map['package']?.toString();
+    var rawList = map['allowedPackages'];
+    allowedPackages = rawList is List
+        ? rawList.map((e) => e.toString()).toList()
+        : null;
+    checkDelayMs = parseInt(map['checkDelayMs']);
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'package': package,
+      'allowedPackages': allowedPackages ?? <String>[],
+      'checkDelayMs': checkDelayMs ?? kioskCheckDelayMsDefault,
+    };
+  }
+
+  @override
+  String toString() => toMap().toString();
+}
+
 class RunningPackageInfo {
   String? package;
 
@@ -151,8 +193,15 @@ abstract class TekartikKiosk {
   /// Set boot options
   Future<void> setBootReceiverOptions(BootReceiverOptions options);
 
-  /// Start kiosk mode
-  Future<void> startKioskMode();
+  /// Set native watchdog options, can be done before starting kiosk mode.
+  Future<void> setKioskOptions(KioskOptions options);
+
+  /// Get native watchdog options.
+  Future<KioskOptions> getKioskOptions();
+
+  /// Start kiosk mode (native watchdog), optionally setting [options] at the
+  /// same time.
+  Future<void> startKioskMode({KioskOptions? options});
 
   /// Stop kiosk mode
   Future<void> stopKioskMode();
@@ -220,7 +269,17 @@ mixin TekartikKioskMockMixin implements TekartikKiosk {
   }
 
   @override
-  Future<void> startKioskMode() {
+  Future<void> setKioskOptions(KioskOptions options) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KioskOptions> getKioskOptions() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> startKioskMode({KioskOptions? options}) {
     throw UnimplementedError();
   }
 
