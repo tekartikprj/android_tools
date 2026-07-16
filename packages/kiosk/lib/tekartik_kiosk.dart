@@ -28,6 +28,18 @@ class TekartikKioskPlugin implements TekartikKiosk {
   }
 
   @override
+  Future<List<RunningProcessInfo>> getRunningProcesses() async {
+    var result = await _channel.invokeMethod('getRunningProcesses');
+    if (result is Map) {
+      var list = result['list'];
+      if (list is List) {
+        return list.map((map) => RunningProcessInfo()..fromMap(map as Map)).toList();
+      }
+    }
+    throw ArgumentError.value(result);
+  }
+
+  @override
   Future<PermissionInfo> getPermissionInfo() async {
     var result = await _channel.invokeMethod('getPermissionInfo');
     // devPrint(result);

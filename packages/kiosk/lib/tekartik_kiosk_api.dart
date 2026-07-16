@@ -133,6 +133,31 @@ class ModeInfo {
   String toString() => toMap().toString();
 }
 
+class RunningProcessInfo {
+  String? processName;
+  int? importance;
+  List<String>? packages;
+
+  void fromMap(Map map) {
+    processName = map['processName']?.toString();
+    importance = parseInt(map['importance']);
+    var rawPackages = map['packages'];
+    packages = rawPackages is List ? rawPackages.map((e) => e.toString()).toList() : null;
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'processName': processName,
+      'importance': importance,
+      'packages': packages ?? <String>[],
+    };
+  }
+
+  @override
+  String toString() => toMap().toString();
+}
+
+
 class DevModeInfo {
   bool? debug;
 
@@ -168,6 +193,9 @@ class PermissionInfo {
 abstract class TekartikKiosk {
   /// Current Running package
   Future<RunningPackageInfo> getCurrentRunningPackageInfo();
+
+  /// List running processes with details
+  Future<List<RunningProcessInfo>> getRunningProcesses();
 
   /// Permissin info (needed before calling getCurrentRunningPackageInfo)
   Future<PermissionInfo> getPermissionInfo();
@@ -225,6 +253,11 @@ class TekartikKioskMock with TekartikKioskMockMixin implements TekartikKiosk {}
 mixin TekartikKioskMockMixin implements TekartikKiosk {
   @override
   Future<RunningPackageInfo> getCurrentRunningPackageInfo() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<RunningProcessInfo>> getRunningProcesses() {
     throw UnimplementedError();
   }
 

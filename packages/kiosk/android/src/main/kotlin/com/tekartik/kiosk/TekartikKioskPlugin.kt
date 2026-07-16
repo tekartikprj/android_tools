@@ -99,6 +99,7 @@ class TekartikKioskPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "requestOverlayPermission" -> handleRequestOverlayPermission(methodInfo)
             "launch" -> handleLaunch(methodInfo)
             "getInstalledPackageInfos" -> handleGetInstalledPackageInfos(methodInfo)
+            "getRunningProcesses" -> handleGetRunningProcesses(methodInfo)
             "setBootReceiverOptions" -> handleSetBootReceiverOptions(methodInfo)
             "getBootReceiverOptions" -> handleGetBootReceiverOptions(methodInfo)
             "setKioskOptions" -> handleSetKioskOptions(methodInfo)
@@ -317,6 +318,25 @@ class TekartikKioskPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun handleGetInstalledPackageInfos(methodInfo: MethodInfo) {
         try {
             methodInfo.result.success(toPackageInfosMap(KioskUtils.getInstalledPackageInfos(context)))
+        } catch (e: Exception) {
+            handleException(methodInfo, e)
+        }
+    }
+
+    private fun handleGetRunningProcesses(methodInfo: MethodInfo) {
+        try {
+            val processes = KioskUtils.getRunningProcesses(context)
+            val map = HashMap<String, Any?>()
+            val list = ArrayList<Map<String, Any?>>()
+            for (proc in processes) {
+                val procMap = HashMap<String, Any?>()
+                procMap["processName"] = proc.processName
+                procMap["importance"] = proc.importance
+                procMap["packages"] = proc.pkgList
+                list.add(procMap)
+            }
+            map["list"] = list
+            methodInfo.success(map)
         } catch (e: Exception) {
             handleException(methodInfo, e)
         }

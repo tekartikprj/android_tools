@@ -291,6 +291,26 @@ object KioskUtils {
         return kioskPackageInfos
     }
 
+    class KioskRunningProcessInfo {
+        var processName: String? = null
+        var importance: Int = 0
+        var pkgList: List<String>? = null
+    }
+
+    fun getRunningProcesses(context: Context): List<KioskRunningProcessInfo> {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningProcesses = activityManager.runningAppProcesses ?: return emptyList()
+        val list = ArrayList<KioskRunningProcessInfo>()
+        for (processInfo in runningProcesses) {
+            val info = KioskRunningProcessInfo()
+            info.processName = processInfo.processName
+            info.importance = processInfo.importance
+            info.pkgList = processInfo.pkgList?.toList()
+            list.add(info)
+        }
+        return list
+    }
+
     private var kioskModeOn = false
 
     fun startKioskMode(context: Context) {
