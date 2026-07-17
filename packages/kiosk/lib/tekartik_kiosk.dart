@@ -33,7 +33,9 @@ class TekartikKioskPlugin implements TekartikKiosk {
     if (result is Map) {
       var list = result['list'];
       if (list is List) {
-        return list.map((map) => RunningProcessInfo()..fromMap(map as Map)).toList();
+        return list
+            .map((map) => RunningProcessInfo()..fromMap(map as Map))
+            .toList();
       }
     }
     throw ArgumentError.value(result);

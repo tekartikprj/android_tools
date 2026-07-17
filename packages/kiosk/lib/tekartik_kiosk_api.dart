@@ -142,7 +142,9 @@ class RunningProcessInfo {
     processName = map['processName']?.toString();
     importance = parseInt(map['importance']);
     var rawPackages = map['packages'];
-    packages = rawPackages is List ? rawPackages.map((e) => e.toString()).toList() : null;
+    packages = rawPackages is List
+        ? rawPackages.map((e) => e.toString()).toList()
+        : null;
   }
 
   Map<String, Object?> toMap() {
@@ -156,7 +158,6 @@ class RunningProcessInfo {
   @override
   String toString() => toMap().toString();
 }
-
 
 class DevModeInfo {
   bool? debug;

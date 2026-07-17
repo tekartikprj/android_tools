@@ -104,7 +104,8 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
       if (options.checkDelayMs != null) {
         _delayController.text = options.checkDelayMs.toString();
       }
-      if (options.allowedPackages != null && options.allowedPackages!.isNotEmpty) {
+      if (options.allowedPackages != null &&
+          options.allowedPackages!.isNotEmpty) {
         _allowedController.text = options.allowedPackages!.join(', ');
       }
 
@@ -156,7 +157,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
     if (start) {
       _recordedLogs.add('${_formatTime(DateTime.now())}: Recording started.');
       _lastLoggedPackage = null;
-      _recordTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+      _recordTimer = Timer.periodic(const Duration(milliseconds: 500), (
+        timer,
+      ) async {
         try {
           var info = await kiosk.getCurrentRunningPackageInfo();
           var currentPkg = info.package;
@@ -203,7 +206,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
           .toList();
 
       var options = KioskOptions(
-        package: _packageController.text.trim().isEmpty ? null : _packageController.text.trim(),
+        package: _packageController.text.trim().isEmpty
+            ? null
+            : _packageController.text.trim(),
         checkDelayMs: delay,
         allowedPackages: allowed,
       );
@@ -211,14 +216,14 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
       await kiosk.startKioskMode(options: options);
       await _loadState();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Kiosk Mode started')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Kiosk Mode started')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to start Kiosk: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to start Kiosk: $e')));
     }
   }
 
@@ -227,14 +232,14 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
       await kiosk.stopKioskMode();
       await _loadState();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Kiosk Mode stopped')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Kiosk Mode stopped')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to stop Kiosk: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to stop Kiosk: $e')));
     }
   }
 
@@ -329,7 +334,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: kioskOn ? Colors.green.shade900 : Colors.red.shade900,
+                            color: kioskOn
+                                ? Colors.green.shade900
+                                : Colors.red.shade900,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -353,7 +360,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
             Card(
               child: SwitchListTile(
                 title: const Text('Pinned Mode (Screen Pinning)'),
-                subtitle: const Text('Start/Stop Android built-in Task Lock mode'),
+                subtitle: const Text(
+                  'Start/Stop Android built-in Task Lock mode',
+                ),
                 value: pinnedOn,
                 onChanged: (value) async {
                   try {
@@ -366,7 +375,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                   } catch (e) {
                     if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to update Pinned Mode: $e')),
+                      SnackBar(
+                        content: Text('Failed to update Pinned Mode: $e'),
+                      ),
                     );
                   }
                 },
@@ -475,7 +486,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                   const SizedBox(height: 16),
                   SwitchListTile(
                     title: const Text('Launch on Boot'),
-                    subtitle: const Text('Restart target package when device boots up'),
+                    subtitle: const Text(
+                      'Restart target package when device boots up',
+                    ),
                     value: bootReceiverEnabled,
                     onChanged: (value) async {
                       try {
@@ -494,7 +507,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                       } catch (e) {
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to set Boot Options: $e')),
+                          SnackBar(
+                            content: Text('Failed to set Boot Options: $e'),
+                          ),
                         );
                       }
                     },
@@ -569,9 +584,13 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                 child: ElevatedButton.icon(
                   onPressed: () => _toggleRecording(!_isRecording),
                   icon: Icon(_isRecording ? Icons.pause : Icons.play_arrow),
-                  label: Text(_isRecording ? 'PAUSE RECORDER' : 'START RECORDER'),
+                  label: Text(
+                    _isRecording ? 'PAUSE RECORDER' : 'START RECORDER',
+                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isRecording ? Colors.orange : Colors.green,
+                    backgroundColor: _isRecording
+                        ? Colors.orange
+                        : Colors.green,
                     foregroundColor: Colors.white,
                   ),
                 ),
@@ -595,7 +614,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
             child: Card(
               child: _recordedLogs.isEmpty
                   ? const Center(
-                      child: Text('No logs recorded yet. Press START to record.'),
+                      child: Text(
+                        'No logs recorded yet. Press START to record.',
+                      ),
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(12),
@@ -603,7 +624,8 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                       reverse: true, // Show newest logs first
                       itemBuilder: (context, index) {
                         // Reverse index
-                        var log = _recordedLogs[_recordedLogs.length - 1 - index];
+                        var log =
+                            _recordedLogs[_recordedLogs.length - 1 - index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Text(
@@ -657,7 +679,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
 
         var processes = snapshot.data ?? [];
         // Sort processes by importance (lower is more active/foreground)
-        processes.sort((a, b) => (a.importance ?? 1000).compareTo(b.importance ?? 1000));
+        processes.sort(
+          (a, b) => (a.importance ?? 1000).compareTo(b.importance ?? 1000),
+        );
 
         return Column(
           children: [
@@ -667,7 +691,10 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                 children: [
                   Text(
                     '${processes.length} Running Processes',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const Spacer(),
                   IconButton(
@@ -683,9 +710,13 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                 itemCount: processes.length,
                 itemBuilder: (_, index) {
                   var proc = processes[index];
-                  var isSelf = proc.packages?.contains(_packageController.text) ?? false;
+                  var isSelf =
+                      proc.packages?.contains(_packageController.text) ?? false;
                   return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     color: isSelf ? Colors.indigo.shade50 : null,
                     child: ListTile(
                       title: Text(
@@ -699,24 +730,37 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 4),
-                          Text('Importance: ${_getImportanceLabel(proc.importance)} (${proc.importance})'),
-                          if (proc.packages != null && proc.packages!.isNotEmpty) ...[
+                          Text(
+                            'Importance: ${_getImportanceLabel(proc.importance)} (${proc.importance})',
+                          ),
+                          if (proc.packages != null &&
+                              proc.packages!.isNotEmpty) ...[
                             const SizedBox(height: 4),
-                            Text('Packages: ${proc.packages!.join(', ')}',
-                                style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                          ]
+                            Text(
+                              'Packages: ${proc.packages!.join(', ')}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
-                      trailing: proc.packages != null && proc.packages!.isNotEmpty
+                      trailing:
+                          proc.packages != null && proc.packages!.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.launch),
                               onPressed: () async {
                                 try {
-                                  await kiosk.launch(packageName: proc.packages!.first);
+                                  await kiosk.launch(
+                                    packageName: proc.packages!.first,
+                                  );
                                 } catch (e) {
                                   if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Failed to launch: $e')),
+                                    SnackBar(
+                                      content: Text('Failed to launch: $e'),
+                                    ),
                                   );
                                 }
                               },
@@ -759,9 +803,17 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
         var apps = snapshot.data ?? [];
         if (_appSearchQuery.isNotEmpty) {
           apps = apps
-              .where((app) =>
-                  (app.name?.toLowerCase().contains(_appSearchQuery.toLowerCase()) ?? false) ||
-                  (app.package?.toLowerCase().contains(_appSearchQuery.toLowerCase()) ?? false))
+              .where(
+                (app) =>
+                    (app.name?.toLowerCase().contains(
+                          _appSearchQuery.toLowerCase(),
+                        ) ??
+                        false) ||
+                    (app.package?.toLowerCase().contains(
+                          _appSearchQuery.toLowerCase(),
+                        ) ??
+                        false),
+              )
               .toList();
         }
 
@@ -790,11 +842,17 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                   var isTarget = _packageController.text == app.package;
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: app.user ?? false ? Colors.orange.shade100 : Colors.blue.shade100,
+                      backgroundColor: app.user ?? false
+                          ? Colors.orange.shade100
+                          : Colors.blue.shade100,
                       child: Text(
-                        (app.name ?? '?').isNotEmpty ? app.name![0].toUpperCase() : '?',
+                        (app.name ?? '?').isNotEmpty
+                            ? app.name![0].toUpperCase()
+                            : '?',
                         style: TextStyle(
-                          color: app.user ?? false ? Colors.orange.shade900 : Colors.blue.shade900,
+                          color: app.user ?? false
+                              ? Colors.orange.shade900
+                              : Colors.blue.shade900,
                         ),
                       ),
                     ),
@@ -828,8 +886,10 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                               } catch (e) {
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Failed to launch: $e')),
-                                  );
+                                  SnackBar(
+                                    content: Text('Failed to launch: $e'),
+                                  ),
+                                );
                               }
                             },
                           ),
