@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.app.AppOpsManager
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.ComponentName
@@ -166,13 +167,17 @@ object KioskUtils {
         return try {
             val ts = System.currentTimeMillis()
             val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-            val usageStats: List<UsageStats>? = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, ts - 60000, ts)
-            //Log.i(TAG, "usageStats " + usageStats)
-            if (usageStats.isNullOrEmpty()) {
-                null
-            } else {
-                usageStats.maxByOrNull { it.lastTimeUsed }?.packageName
+            val events = usageStatsManager.queryEvents(ts - 60000, ts) ?: return null
+            val event = UsageEvents.Event()
+            var lastPackageName: String? = null
+            
+            while (events.hasNextEvent()) {
+                events.getNextEvent(event)
+                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                    lastPackageName = event.packageName
+                }
             }
+            lastPackageName
         } catch (ex: Exception) {
             Log.e(TAG, "isInBackground", ex)
             null
