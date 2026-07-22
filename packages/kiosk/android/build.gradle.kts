@@ -2,7 +2,6 @@ group = "com.example.tekartik_kiosk"
 version = "1.0"
 
 buildscript {
-    val kotlinVersion = "2.1.0"
     repositories {
         google()
         mavenCentral()
@@ -10,7 +9,6 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.7.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -23,7 +21,14 @@ allprojects {
 
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+}
+
+// Only apply the Kotlin Gradle Plugin ourselves on older AGP versions that
+// don't yet bundle built-in Kotlin support.
+// See https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+val agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.substringBefore('.').toInt()
+if (agpMajor < 9) {
+    apply(plugin = "org.jetbrains.kotlin.android")
 }
 
 android {
@@ -32,8 +37,8 @@ android {
     compileSdk = 34
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     sourceSets {
@@ -47,8 +52,8 @@ android {
     }
 }
 
-kotlin {
+project.extensions.configure(org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension::class.java) {
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
