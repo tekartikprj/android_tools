@@ -8,3 +8,6 @@ pubspec_overrides.yaml
 .flutter*
 .dart_tool/
 .metadata
+
+# android
+local.properties
