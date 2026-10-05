@@ -25,9 +25,8 @@ class AdbPackageScreenBloc
   }
 
   Future refresh() async {
-    var result = await DeviceAdb(
-      deviceSerial,
-    ).getDumpsysPackageInfo(packageName);
+    var result = await DeviceAdb(deviceSerial)
+        .getDumpsysPackageInfo(packageName);
     add(AdbPackageScreenBlocState(dumpsysPackageResult: result));
   }
 }
