@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk_api.dart';
 
@@ -216,14 +217,12 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
       await kiosk.startKioskMode(options: options);
       await _loadState();
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Kiosk Mode started')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Kiosk Mode started')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to start Kiosk: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to start Kiosk: $e')));
     }
   }
 
@@ -232,14 +231,12 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
       await kiosk.stopKioskMode();
       await _loadState();
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Kiosk Mode stopped')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Kiosk Mode stopped')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to stop Kiosk: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to stop Kiosk: $e')));
     }
   }
 

@@ -37,6 +37,9 @@ dependencies:
     git:
       url: https://github.com/tekartikprj/android_tools
       path: packages/kiosk
+  tekartik_common_utils:
+    git:
+      url: https://github.com/tekartik/common_utils.dart
 dev_dependencies:
   flutter_test:
     sdk: flutter

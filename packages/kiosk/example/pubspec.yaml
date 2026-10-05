@@ -25,6 +25,9 @@ dependencies:
       url: https://github.com/tekartik/test_menu_flutter
       path: test_menu_flutter
     version: '>=0.2.3'
+  tekartik_common_utils:
+    git:
+      url: https://github.com/tekartik/common_utils.dart
 dev_dependencies:
   flutter_test:
     sdk: flutter
