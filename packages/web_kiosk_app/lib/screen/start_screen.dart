@@ -5,7 +5,6 @@ import 'package:tekartik_web_kiosk_app/import/import_flutter.dart';
 import 'package:tekartik_web_kiosk_app/screen/settings_screen.dart';
 import 'package:tekartik_web_kiosk_app/screen/start_screen_bloc.dart';
 import 'package:tekartik_web_kiosk_app/screen/web_kiosk_screen.dart';
-import 'package:tekartik_web_kiosk_app/screen/web_kiosk_screen_bloc.dart';
 
 /// Start screen
 class StartScreen extends StatefulWidget {
@@ -90,12 +89,7 @@ class _StartScreenState extends State<StartScreen> {
 
   Future<void> _goToWebKioskScreen(BuildContext context) async {
     await Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(
-        builder: (context) => BlocProvider(
-          blocBuilder: () => WebKioskScreenBloc(),
-          child: const WebKioskScreen(),
-        ),
-      ),
+      MaterialPageRoute<void>(builder: (context) => const WebKioskScreen()),
       (_) => false,
     );
   }

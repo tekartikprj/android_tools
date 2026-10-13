@@ -6,8 +6,9 @@ Demonstrates how to use the tekartik_kiosk plugin.
 
 ```
   tekartik_kiosk:
+    git:
       url: https://github.com/tekartikprj/android_tools
-      path: packages/tekartik_kiosk
+      path: packages/kiosk
 ```
 
 Added to manifest (not needed):

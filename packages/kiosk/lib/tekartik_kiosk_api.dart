@@ -124,7 +124,7 @@ class ModeInfo {
   Map<String, Object?> toMap() {
     return {
       'kioskOn': kioskOn,
-      'pinnedModeOn': pinnedOn,
+      'pinnedOn': pinnedOn,
       'pinnedSupported': pinnedSupported,
     };
   }

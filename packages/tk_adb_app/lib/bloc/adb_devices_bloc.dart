@@ -1,4 +1,5 @@
 import 'package:tk_adb_app/import.dart';
+import 'package:tk_adb_app/src/bloc_poll.dart';
 
 class AdbDevicesBlocState {
   final List<AdbDeviceInfo> adbDeviceInfos;
@@ -12,12 +13,7 @@ class AdbDevicesBloc extends BaseBloc {
   ValueStream<AdbDevicesBlocState> get state => _state;
 
   AdbDevicesBloc() {
-    () async {
-      while (!disposed) {
-        refresh().unawait();
-        await sleep(3000);
-      }
-    }();
+    blocPollRefresh(this, const Duration(seconds: 3), refresh);
   }
 
   @override
@@ -28,7 +24,9 @@ class AdbDevicesBloc extends BaseBloc {
 
   Future refresh() async {
     var list = await getAdbDeviceInfos();
-    _state.add(AdbDevicesBlocState(adbDeviceInfos: list));
+    if (!disposed) {
+      _state.add(AdbDevicesBlocState(adbDeviceInfos: list));
+    }
   }
 }
 

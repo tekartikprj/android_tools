@@ -1,5 +1,6 @@
 import 'package:festenao_common_flutter/common_utils_widget.dart';
 import 'package:tk_adb_app/import.dart';
+import 'package:tk_adb_app/src/bloc_poll.dart';
 
 import 'adb_package_screen.dart';
 
@@ -24,12 +25,7 @@ class AdbDevicePageBloc extends BaseBloc {
   final _state = BehaviorSubject<AdbDevicePageBlocState>();
 
   AdbDevicePageBloc({required this.adbDeviceInfo}) {
-    () async {
-      while (!disposed) {
-        refresh().unawait();
-        await sleep(10000);
-      }
-    }();
+    blocPollRefresh(this, const Duration(seconds: 10), refresh);
   }
 
   ValueStream<AdbDevicePageBlocState> get state => _state;
@@ -86,7 +82,9 @@ class AdbDevicePageBloc extends BaseBloc {
 
   Future<void> refresh() async {
     var packages = await getInstalledPackages();
-    _state.add(AdbDevicePageBlocState(packages: packages));
+    if (!disposed) {
+      _state.add(AdbDevicePageBlocState(packages: packages));
+    }
   }
 
   @override
@@ -140,12 +138,10 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
               run('adb -s ${adbDeviceInfo.serial} reboot');
             },
           ),
+          // Unfinished: command to run on the device
           ListTile(
             title: const TextField(),
             subtitle: Text('adb -s ${adbDeviceInfo.serial}'),
-            onTap: () {
-              run('adb -s ${adbDeviceInfo.serial} reboot');
-            },
           ),
           ValueStreamBuilder<AdbDevicePageBlocState>(
             stream: bloc.state,

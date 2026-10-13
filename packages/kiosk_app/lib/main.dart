@@ -72,6 +72,12 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
 
   // Search filter for installed apps
   String _appSearchQuery = '';
+  final _appSearchController = TextEditingController();
+
+  // Fetched once, again on refresh, retry or when selecting the tab, not on
+  // every rebuild (the status polling rebuilds every 2 seconds).
+  Future<List<RunningProcessInfo>>? _processesFuture;
+  Future<List<PackageInfo>>? _appsFuture;
 
   @override
   void initState() {
@@ -86,6 +92,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
     _packageController.dispose();
     _delayController.dispose();
     _allowedController.dispose();
+    _appSearchController.dispose();
     super.dispose();
   }
 
@@ -259,6 +266,9 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
         onDestinationSelected: (index) {
           setState(() {
             _currentIndex = index;
+            // Fetch again when selecting the tab
+            _processesFuture = null;
+            _appsFuture = null;
           });
         },
         destinations: const [
@@ -644,7 +654,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
 
   Widget _buildProcessesTab() {
     return FutureBuilder<List<RunningProcessInfo>>(
-      future: kiosk.getRunningProcesses(),
+      future: _processesFuture ??= kiosk.getRunningProcesses(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -665,7 +675,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => setState(() {}),
+                    onPressed: _refreshProcesses,
                     child: const Text('Retry'),
                   ),
                 ],
@@ -696,7 +706,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.refresh),
-                    onPressed: () => setState(() {}),
+                    onPressed: _refreshProcesses,
                     tooltip: 'Refresh Process List',
                   ),
                 ],
@@ -775,6 +785,12 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
     );
   }
 
+  void _refreshProcesses() {
+    setState(() {
+      _processesFuture = null;
+    });
+  }
+
   String _getImportanceLabel(int? importance) {
     if (importance == null) return 'Unknown';
     if (importance <= 100) return 'Foreground App';
@@ -787,52 +803,50 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
   }
 
   Widget _buildAppsTab() {
-    return FutureBuilder<List<PackageInfo>>(
-      future: kiosk.getInstalledPackageInfos(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Failed to get apps: ${snapshot.error}'));
-        }
-
-        var apps = snapshot.data ?? [];
-        if (_appSearchQuery.isNotEmpty) {
-          apps = apps
-              .where(
-                (app) =>
-                    (app.name?.toLowerCase().contains(
-                          _appSearchQuery.toLowerCase(),
-                        ) ??
-                        false) ||
-                    (app.package?.toLowerCase().contains(
-                          _appSearchQuery.toLowerCase(),
-                        ) ??
-                        false),
-              )
-              .toList();
-        }
-
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Search Installed Apps',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (val) {
-                  setState(() {
-                    _appSearchQuery = val;
-                  });
-                },
-              ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: TextField(
+            controller: _appSearchController,
+            decoration: const InputDecoration(
+              labelText: 'Search Installed Apps',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
             ),
-            Expanded(
-              child: ListView.builder(
+            onChanged: (val) {
+              setState(() {
+                _appSearchQuery = val;
+              });
+            },
+          ),
+        ),
+        Expanded(
+          child: FutureBuilder<List<PackageInfo>>(
+            future: _appsFuture ??= kiosk.getInstalledPackageInfos(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Failed to get apps: ${snapshot.error}'),
+                );
+              }
+
+              var apps = snapshot.data ?? [];
+              var query = _appSearchQuery.toLowerCase();
+              if (query.isNotEmpty) {
+                apps = apps
+                    .where(
+                      (app) =>
+                          (app.name?.toLowerCase().contains(query) ?? false) ||
+                          (app.package?.toLowerCase().contains(query) ?? false),
+                    )
+                    .toList();
+              }
+
+              return ListView.builder(
                 itemCount: apps.length,
                 itemBuilder: (_, index) {
                   var app = apps[index];
@@ -894,11 +908,11 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                     ),
                   );
                 },
-              ),
-            ),
-          ],
-        );
-      },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

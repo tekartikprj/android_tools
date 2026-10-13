@@ -1,14 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk_api.dart';
-
-import 'package:tekartik_web_kiosk_app/import/import_flutter.dart';
 import 'package:tekartik_web_kiosk_app/screen/start_screen.dart';
 import 'package:tekartik_web_kiosk_app/sembast/sembast.dart';
 import 'package:tekartik_web_kiosk_app/utils/passcode.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import 'web_kiosk_screen_bloc.dart';
 
 /// Start screen
 class WebKioskScreen extends StatefulWidget {
@@ -87,53 +83,6 @@ class _WebKioskScreenState extends State<WebKioskScreen> {
       },
       child: Scaffold(
         body: SafeArea(child: WebViewWidget(controller: _controller)),
-      ),
-    );
-    // ignore: dead_code
-    var bloc = BlocProvider.of<WebKioskScreenBloc>(context);
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return ValueStreamBuilder(
-            stream: bloc.state,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return Center(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    const SizedBox(height: 16),
-                    IntrinsicWidth(
-                      child: Column(
-                        //crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: Text('Confdigure'.toUpperCase()),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: 160,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: Text('Start'.toUpperCase()),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              );
-            },
-          );
-        },
       ),
     );
   }

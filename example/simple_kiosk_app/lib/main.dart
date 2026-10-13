@@ -55,7 +55,7 @@ void main() {
           if (info.package != previousPackageName) {
             previousPackageName = info.package;
             write(
-              '${DateTime.now().toIso8601String().substring(7, 12)} $previousPackageName',
+              '${DateTime.now().toIso8601String().substring(11, 23)} $previousPackageName',
             );
           }
           await Future<void>.delayed(const Duration(seconds: 1));

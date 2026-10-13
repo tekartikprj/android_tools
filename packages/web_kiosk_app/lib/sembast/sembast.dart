@@ -45,16 +45,17 @@ class WebKioskDb {
 
   /// Database name
   final String dbName;
+  final DatabaseFactory? _databaseFactory;
   late Database _db;
 
-  /// Constructor
-  WebKioskDb({this.dbName = _defaultDbName}) {
+  /// Constructor, [databaseFactory] defaults to the app database factory.
+  WebKioskDb({this.dbName = _defaultDbName, this._databaseFactory}) {
     cvAddConstructors([DbPrefsGeneral.new]);
   }
 
   /// Ready future
   late var ready = () async {
-    _db = await _factory.openDatabase(dbName);
+    _db = await (_databaseFactory ?? _factory).openDatabase(dbName);
   }();
 
   /// Get general preferences stream
@@ -72,5 +73,5 @@ class WebKioskDb {
   }
 }
 
-/// Global instance
-final globalWebKioskDb = WebKioskDb();
+/// Global instance (can be replaced in tests)
+var globalWebKioskDb = WebKioskDb();

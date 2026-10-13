@@ -8,7 +8,7 @@ Basic kiosk support
   tekartik_kiosk:
     git:
       url: https://github.com/tekartikprj/android_tools
-      path: packages/tekartik_kiosk
+      path: packages/kiosk
 ```
 
 Set activity class from java code

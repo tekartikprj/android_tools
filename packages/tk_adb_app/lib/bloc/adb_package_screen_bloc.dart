@@ -1,5 +1,6 @@
 import 'package:festenao_common_flutter/common_utils_widget.dart';
 import 'package:tk_adb_app/import.dart';
+import 'package:tk_adb_app/src/bloc_poll.dart';
 
 class AdbPackageScreenBlocState {
   final DumpsysPackageResult dumpsysPackageResult;
@@ -16,17 +17,14 @@ class AdbPackageScreenBloc
     required this.deviceSerial,
     required this.packageName,
   }) {
-    () async {
-      while (!disposed) {
-        refresh().unawait();
-        await sleep(60000);
-      }
-    }();
+    blocPollRefresh(this, const Duration(minutes: 1), refresh);
   }
 
   Future refresh() async {
     var result = await DeviceAdb(deviceSerial)
         .getDumpsysPackageInfo(packageName);
-    add(AdbPackageScreenBlocState(dumpsysPackageResult: result));
+    if (!disposed) {
+      add(AdbPackageScreenBlocState(dumpsysPackageResult: result));
+    }
   }
 }

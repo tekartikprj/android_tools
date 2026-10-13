@@ -62,7 +62,7 @@ class _SettingsScreenState extends AutoDisposeBaseState<SettingsScreen>
                     _urlController ??= audiAddTextEditingController(
                       TextEditingController(text: dbPrefGeneral.url.v),
                     );
-                    _passcodeController = audiAddTextEditingController(
+                    _passcodeController ??= audiAddTextEditingController(
                       TextEditingController(text: dbPrefGeneral.passcodeValue),
                     );
                     return ListView(

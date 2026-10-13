@@ -54,15 +54,21 @@ class _AdbDevicesPageState extends State<AdbDevicesPage> {
             itemCount: adbDeviceInfos.length,
             itemBuilder: (context, index) {
               var adbDeviceInfo = adbDeviceInfos[index];
+              // Only a ready device (not offline or unauthorized) can be used
+              var ready = adbDeviceInfo.type == 'device';
               return ListTile(
                 title: Text(adbDeviceInfo.serial!),
-                onTap: () async {
-                  await goToAdbDevicePage(
-                    context,
-                    adbDeviceInfo: adbDeviceInfo,
-                  );
-                  await bloc.refresh();
-                },
+                subtitle: Text(adbDeviceInfo.type ?? ''),
+                enabled: ready,
+                onTap: ready
+                    ? () async {
+                        await goToAdbDevicePage(
+                          context,
+                          adbDeviceInfo: adbDeviceInfo,
+                        );
+                        await bloc.refresh();
+                      }
+                    : null,
               );
             },
           );

@@ -16,91 +16,77 @@ TekartikKiosk tekartikKioskPlugin = TekartikKioskPlugin();
 class TekartikKioskPlugin implements TekartikKiosk {
   static const MethodChannel _channel = MethodChannel('tekartik_kiosk');
 
-  @override
-  Future<RunningPackageInfo> getCurrentRunningPackageInfo() async {
-    var result = await _channel.invokeMethod('getCurrentRunningPackageInfo');
-    // devPrint(result);
+  /// Invokes [method], its result must be a map converted using [fromMap].
+  static Future<T> _invokeMap<T>(
+    String method,
+    T Function(Map map) fromMap, [
+    Object? arguments,
+  ]) async {
+    var result = await _channel.invokeMethod<Object?>(method, arguments);
     if (result is Map) {
-      return RunningPackageInfo()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
+      return fromMap(result);
     }
+    throw ArgumentError.value(result);
   }
 
-  @override
-  Future<List<RunningProcessInfo>> getRunningProcesses() async {
-    var result = await _channel.invokeMethod('getRunningProcesses');
+  /// Invokes [method], its result must be a map with a 'list' of maps, each
+  /// one converted using [fromMap].
+  static Future<List<T>> _invokeList<T>(
+    String method,
+    T Function(Map map) fromMap,
+  ) async {
+    var result = await _channel.invokeMethod<Object?>(method);
     if (result is Map) {
       var list = result['list'];
       if (list is List) {
-        return list
-            .map((map) => RunningProcessInfo()..fromMap(map as Map))
-            .toList();
+        return list.map((map) => fromMap(map as Map)).toList();
       }
     }
     throw ArgumentError.value(result);
   }
 
   @override
-  Future<PermissionInfo> getPermissionInfo() async {
-    var result = await _channel.invokeMethod('getPermissionInfo');
-    // devPrint(result);
-    if (result is Map) {
-      return PermissionInfo()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<RunningPackageInfo> getCurrentRunningPackageInfo() => _invokeMap(
+    'getCurrentRunningPackageInfo',
+    (map) => RunningPackageInfo()..fromMap(map),
+  );
+
+  @override
+  Future<List<RunningProcessInfo>> getRunningProcesses() => _invokeList(
+    'getRunningProcesses',
+    (map) => RunningProcessInfo()..fromMap(map),
+  );
+
+  @override
+  Future<PermissionInfo> getPermissionInfo() =>
+      _invokeMap('getPermissionInfo', (map) => PermissionInfo()..fromMap(map));
 
   /// The response is returned right away so you need polling on the permission
   @override
-  Future<PermissionInfo> requestPermissionForUsageStat() async {
-    var result = await _channel.invokeMethod('requestPermissionForUsageStat');
-    // devPrint(result);
-    if (result is Map) {
-      return PermissionInfo()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<PermissionInfo> requestPermissionForUsageStat() => _invokeMap(
+    'requestPermissionForUsageStat',
+    (map) => PermissionInfo()..fromMap(map),
+  );
 
   /// The response is returned right away so you need polling on the permission
   @override
-  Future<PermissionInfo> requestOverlayPermission() async {
-    var result = await _channel.invokeMethod('requestOverlayPermission');
-    // devPrint(result);
-    if (result is Map) {
-      return PermissionInfo()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<PermissionInfo> requestOverlayPermission() => _invokeMap(
+    'requestOverlayPermission',
+    (map) => PermissionInfo()..fromMap(map),
+  );
 
   @override
-  Future<PackageInfo> getPackageInfo({String? packageName}) async {
-    var result = await _channel.invokeMethod('getPackageInfo', {
-      'package': packageName,
-    });
-    // devPrint(result);
-    if (result is Map) {
-      return PackageInfo()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<PackageInfo> getPackageInfo({String? packageName}) => _invokeMap(
+    'getPackageInfo',
+    (map) => PackageInfo()..fromMap(map),
+    {'package': packageName},
+  );
 
   @override
-  Future<List<PackageInfo>> getInstalledPackageInfos() async {
-    var result = await _channel.invokeMethod('getInstalledPackageInfos');
-    // devPrint(result);
-    if (result is Map) {
-      var list = result['list'];
-      if (list is List) {
-        return list.map((map) => PackageInfo()..fromMap(map as Map)).toList();
-      }
-    }
-    throw ArgumentError.value(result);
-  }
+  Future<List<PackageInfo>> getInstalledPackageInfos() => _invokeList(
+    'getInstalledPackageInfos',
+    (map) => PackageInfo()..fromMap(map),
+  );
 
   @override
   Future<void> launch({String? packageName}) async {
@@ -108,15 +94,10 @@ class TekartikKioskPlugin implements TekartikKiosk {
   }
 
   @override
-  Future<BootReceiverOptions> getBootReceiverOptions() async {
-    var result = await _channel.invokeMethod('getBootReceiverOptions');
-    // devPrint(result);
-    if (result is Map) {
-      return BootReceiverOptions()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<BootReceiverOptions> getBootReceiverOptions() => _invokeMap(
+    'getBootReceiverOptions',
+    (map) => BootReceiverOptions()..fromMap(map),
+  );
 
   @override
   Future<void> setBootReceiverOptions(BootReceiverOptions options) async {
@@ -129,14 +110,8 @@ class TekartikKioskPlugin implements TekartikKiosk {
   }
 
   @override
-  Future<KioskOptions> getKioskOptions() async {
-    var result = await _channel.invokeMethod('getKioskOptions');
-    if (result is Map) {
-      return KioskOptions()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<KioskOptions> getKioskOptions() =>
+      _invokeMap('getKioskOptions', (map) => KioskOptions()..fromMap(map));
 
   @override
   Future<void> startKioskMode({KioskOptions? options}) async {
@@ -164,12 +139,6 @@ class TekartikKioskPlugin implements TekartikKiosk {
   }
 
   @override
-  Future<ModeInfo> getModeInfo() async {
-    var result = await _channel.invokeMethod('getModeInfo');
-    if (result is Map) {
-      return ModeInfo()..fromMap(result);
-    } else {
-      throw ArgumentError.value(result);
-    }
-  }
+  Future<ModeInfo> getModeInfo() =>
+      _invokeMap('getModeInfo', (map) => ModeInfo()..fromMap(map));
 }
