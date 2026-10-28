@@ -1,4 +1,4 @@
-import 'package:festenao_common_flutter/common_utils_widget.dart';
+import 'package:festenao_theme/kit.dart';
 import 'package:tk_adb_app/bloc/adb_package_screen_bloc.dart';
 import 'package:tk_adb_app/import.dart';
 
@@ -14,45 +14,44 @@ class _AdbPackageScreenState extends State<AdbPackageScreen> {
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of<AdbPackageScreenBloc>(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Package ')),
+      appBar: AppBar(title: const Text('Package')),
       body: ValueStreamBuilder<AdbPackageScreenBlocState>(
         stream: bloc.state,
         builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          var adbDeviceInfos = snapshot.data!.dumpsysPackageResult;
-          var pkgInfo = adbDeviceInfos.packageInfo;
-          return ListView(
+          var pkgInfo = snapshot.data?.dumpsysPackageResult.packageInfo;
+          return FkPage(
             children: [
-              BodyContainer(
-                child: Column(
+              FkHeader(title: bloc.packageName, subtitle: bloc.deviceSerial),
+              if (snapshot.data == null)
+                const FkCard(child: Center(child: CircularProgressIndicator()))
+              else if (pkgInfo == null)
+                const FkCard(
+                  child: FkEmpty(
+                    icon: Icons.help_outline,
+                    message: 'No package info found',
+                  ),
+                )
+              else
+                FkListCard(
                   children: [
-                    if (pkgInfo != null) ...[
-                      ListTile(
-                        title: Text('Package name: ${pkgInfo.packageName}'),
-                      ),
-                      ListTile(
-                        title: Text('Version name: ${pkgInfo.versionName}'),
-                      ),
-                      ListTile(
-                        title: Text('Version code: ${pkgInfo.versionCode}'),
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Min SDK version: ${pkgInfo.minSdkVersion}',
-                        ),
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Target SDK version: ${pkgInfo.targetSdkVersion}',
-                        ),
-                      ),
-                    ] else
-                      const ListTile(title: Text('No package info found')),
+                    FkKeyValueRow(
+                      label: 'Version name',
+                      value: pkgInfo.versionName,
+                    ),
+                    FkKeyValueRow(
+                      label: 'Version code',
+                      value: '${pkgInfo.versionCode}',
+                    ),
+                    FkKeyValueRow(
+                      label: 'Min SDK version',
+                      value: '${pkgInfo.minSdkVersion}',
+                    ),
+                    FkKeyValueRow(
+                      label: 'Target SDK version',
+                      value: '${pkgInfo.targetSdkVersion}',
+                    ),
                   ],
                 ),
-              ),
             ],
           );
         },

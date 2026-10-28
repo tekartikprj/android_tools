@@ -2,6 +2,20 @@
 
 Adb helper app: AVD manager, adb devices, kill the emulators.
 
+## Screens
+
+On the festenao theme (`festenao_theme` presets Festenao, Ardoise, Obsidian,
+Contrast and light/dark, the palette button of the home page), the choice
+kept in the app preferences.
+
+- **Home**: the connected devices (live), the AVD manager, adb kill-server,
+  adb connect, kill all emulators.
+- **Device**: reboot, kill (an emulator), an adb command and its output, the
+  installed packages with a filter; the **System** chip shows or hides the
+  system packages (remembered). Uninstall one package with its trash icon, or
+  select several (the checklist button or a long press, select all) and
+  uninstall them with a single confirmation.
+
 ## Global command
 
 `bin/tk_adb_app.dart` runs the desktop release built in `deploy/<platform>`

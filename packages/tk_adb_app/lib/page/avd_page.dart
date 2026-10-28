@@ -1,3 +1,4 @@
+import 'package:festenao_theme/kit.dart';
 import 'package:tk_adb_app/import.dart';
 
 class AvdPageBlocState {
@@ -21,6 +22,29 @@ class AvdPageBloc extends BaseBloc {
   }
 }
 
+/// Starts the emulator of [avdInfo] (without its snapshot when [coldBoot]),
+/// left running in the background.
+void startAvd(
+  BuildContext context, {
+  required AvdInfo avdInfo,
+  bool coldBoot = false,
+}) {
+  var name = avdInfo.name;
+  unawaited(
+    run('emulator ${coldBoot ? '-no-snapshot-load ' : ''}-avd $name')
+        .then<void>(
+          (_) {},
+          onError: (Object e) {
+            // ignore: avoid_print
+            print('emulator $name: $e');
+          },
+        ),
+  );
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(coldBoot ? 'Cold booting $name' : 'Starting $name')),
+  );
+}
+
 class AvdPage extends StatefulWidget {
   const AvdPage({super.key});
 
@@ -34,21 +58,37 @@ class _AvdPageState extends State<AvdPage> {
     var bloc = BlocProvider.of<AvdPageBloc>(context);
     var avdInfo = bloc.avdInfo;
     return Scaffold(
-      appBar: AppBar(title: const Text('AVD Info')),
-      body: ListView(
+      appBar: AppBar(title: const Text('AVD')),
+      body: FkPage(
         children: [
-          ListTile(title: Text(avdInfo.name!)),
-          ListTile(
-            title: const Text('Start'),
-            onTap: () {
-              run('emulator -avd ${avdInfo.name}');
-            },
+          FkHeader(
+            title: avdInfo.name,
+            subtitle: avdInfo.device,
+            actions: [
+              FilledButton.icon(
+                onPressed: () => startAvd(context, avdInfo: avdInfo),
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('Start'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () =>
+                    startAvd(context, avdInfo: avdInfo, coldBoot: true),
+                icon: const Icon(Icons.ac_unit),
+                label: const Text('Cold boot'),
+              ),
+            ],
           ),
-          ListTile(
-            title: const Text('Cold boot'),
-            onTap: () {
-              run('emulator -no-snapshot-load -avd ${avdInfo.name}');
-            },
+          FkListCard(
+            children: [
+              if (avdInfo.device != null)
+                FkKeyValueRow(label: 'Device', value: avdInfo.device!),
+              if (avdInfo.target != null)
+                FkKeyValueRow(label: 'Target', value: avdInfo.target!),
+              if (avdInfo.skin != null)
+                FkKeyValueRow(label: 'Skin', value: avdInfo.skin!),
+              if (avdInfo.path != null)
+                FkKeyValueRow(label: 'Path', value: avdInfo.path!),
+            ],
           ),
         ],
       ),

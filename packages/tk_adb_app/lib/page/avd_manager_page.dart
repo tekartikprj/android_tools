@@ -1,3 +1,4 @@
+import 'package:festenao_theme/kit.dart';
 import 'package:tk_adb_app/bloc/avd_manager_bloc.dart';
 import 'package:tk_adb_app/import.dart';
 import 'package:tk_adb_app/page/avd_page.dart';
@@ -43,25 +44,67 @@ class _AvdManagerPageState extends State<AvdManagerPage> {
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of<AvdManagerPageBloc>(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('AVD Manager')),
+      appBar: AppBar(
+        title: const Text('AVD Manager'),
+        actions: [
+          IconButton(
+            tooltip: 'Refresh',
+            icon: const Icon(Icons.refresh),
+            onPressed: () => bloc.refresh(),
+          ),
+        ],
+      ),
       body: ValueStreamBuilder<AvdManagerPageBlocState>(
         stream: bloc.state,
         builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          var avdInfos = snapshot.data!.avdInfos;
-          return ListView.builder(
-            itemCount: avdInfos.length,
-            itemBuilder: (context, index) {
-              var avdInfo = avdInfos[index]!;
-              return ListTile(
-                title: Text(avdInfo.name!),
-                onTap: () {
-                  goToAvdPage(context, avdInfo: avdInfo);
-                },
-              );
-            },
+          var avdInfos = snapshot.data?.avdInfos.nonNulls.toList();
+          return FkPage(
+            children: [
+              if (avdInfos == null)
+                const FkCard(child: Center(child: CircularProgressIndicator()))
+              else if (avdInfos.isEmpty)
+                const FkCard(
+                  child: FkEmpty(
+                    icon: Icons.devices_other,
+                    message: 'No AVD, create one in Android Studio',
+                  ),
+                )
+              else
+                FkListCard(
+                  children: [
+                    for (var avdInfo in avdInfos)
+                      FkRow(
+                        leading: const FkIconBox(Icons.developer_mode),
+                        title: avdInfo.name ?? '?',
+                        subtitle: [
+                          ?avdInfo.device,
+                          ?avdInfo.target,
+                        ].join(' · '),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              tooltip: 'Start',
+                              icon: const Icon(Icons.play_arrow),
+                              onPressed: () =>
+                                  startAvd(context, avdInfo: avdInfo),
+                            ),
+                            IconButton(
+                              tooltip: 'Cold boot',
+                              icon: const Icon(Icons.ac_unit),
+                              onPressed: () => startAvd(
+                                context,
+                                avdInfo: avdInfo,
+                                coldBoot: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () => goToAvdPage(context, avdInfo: avdInfo),
+                      ),
+                  ],
+                ),
+            ],
           );
         },
       ),

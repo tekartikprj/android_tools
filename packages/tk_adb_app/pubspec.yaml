@@ -56,6 +56,16 @@ dependencies:
       url: https://github.com/tekaly/festenao
       path: packages_flutter/festenao_common_flutter
   material_ui: ">=1.5.0"
+  # Festenao presets, kit (pages, list cards, rows, pills) and theme switcher
+  festenao_theme:
+    git:
+      url: https://github.com/tekaly/festenao
+      path: packages_flutter/festenao_theme
+  # The theme choice and the system packages shown
+  tekartik_app_prefs:
+    git:
+      url: https://github.com/tekartik/app_flutter_utils.dart
+      path: app_prefs
   # bin/tk_adb_app.dart: builds (deploy/<platform>) and runs the desktop
   # release (app_launcher.dart)
   tekartik_flutter_build:
