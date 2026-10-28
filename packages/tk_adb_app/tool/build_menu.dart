@@ -1,36 +1,18 @@
-import 'dart:io';
-
 import 'package:tekartik_build_menu_flutter/app_build_menu.dart';
+import 'package:tekartik_flutter_build/app_build_menu.dart'
+    show menuFlutterAppHostLauncherContent;
+import 'package:tekartik_flutter_build/app_launcher.dart';
 
-Future<void> buildRelease() async {
-  await createProject('.');
-  await buildProject('.');
-}
+/// Builds (`deploy/<platform>`), runs and installs the desktop release,
+/// shared with `bin/tk_adb_app.dart`.
+var appLauncher = FlutterAppHostLauncher(
+  packageName: 'tk_adb_app',
+  macosSandbox: false,
+);
 
-Future<void> runRelease() async {
-  await runBuiltProject('.');
-}
-
-Future main(List<String> arguments) async {
-  var appPath = '.';
+Future<void> main(List<String> arguments) async {
   mainMenuConsole(arguments, () {
-    if (Platform.isWindows || Platform.isLinux) {
-      /*item('build and run marker', () async {
-        await createProject('.');
-        await buildProject('.', target: 'lib/create_file_and_exit_main.dart');
-        await runBuiltProject('.');
-      });*/
-      item('build and run $buildPlatformCurrent', () async {
-        await buildRelease();
-        await runRelease();
-      });
-      item('build $buildPlatformCurrent', () async {
-        await buildRelease();
-      });
-      item('run $buildPlatformCurrent', () async {
-        await runRelease();
-      });
-    }
-    menuAppContent(path: appPath);
+    menuFlutterAppHostLauncherContent(launcher: appLauncher);
+    menuFlutterAppContent(builder: appLauncher.appBuilder);
   });
 }

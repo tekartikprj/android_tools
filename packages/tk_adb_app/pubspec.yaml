@@ -56,6 +56,13 @@ dependencies:
       url: https://github.com/tekaly/festenao
       path: packages_flutter/festenao_common_flutter
   material_ui: ">=1.5.0"
+  # bin/tk_adb_app.dart: builds (deploy/<platform>) and runs the desktop
+  # release (app_launcher.dart)
+  tekartik_flutter_build:
+    git:
+      url: https://github.com/tekartik/app_build.dart
+      path: packages/flutter_build
+    version: '>=0.2.4'
 dev_dependencies:
   tekartik_build_menu_flutter:
     git:
@@ -73,6 +80,9 @@ dependency_overrides:
   # tekartik_android_utils:
   #  path: ../../../../../../github.com/tekartik/android_utils.dart
 
+
+executables:
+  tk_adb_app:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -57,3 +57,5 @@ windows/
 web/
 .metadata
 /snap/
+# Desktop release run by bin/tk_adb_app.dart
+deploy/
