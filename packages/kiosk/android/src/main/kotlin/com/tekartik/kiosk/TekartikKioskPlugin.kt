@@ -344,7 +344,9 @@ class TekartikKioskPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun handleException(methodInfo: MethodInfo, e: Exception) {
         try {
-            methodInfo.error(ERROR_CODE_DEFAULT, e.message, methodInfo.call)
+            // No MethodCall as details: the codec cannot encode it, the reply
+            // was never sent and the Dart call never completed.
+            methodInfo.error(ERROR_CODE_DEFAULT, e.message, null)
         } catch (ignore: Exception) {
         }
     }

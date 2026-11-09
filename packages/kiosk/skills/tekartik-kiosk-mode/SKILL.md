@@ -6,8 +6,8 @@ description: >-
   (package, allowedPackages, checkDelayMs, kioskCheckDelayMsDefault),
   setKioskOptions/getKioskOptions, startPinnedMode/stopPinnedMode (android
   screen pinning), getModeInfo/ModeInfo (kioskOn, pinnedOn, pinnedSupported),
-  BootReceiverOptions to relaunch an app at boot, plus the android MainActivity
-  KioskService.setStartClass wiring and TekartikKioskMock for tests.
+  BootReceiverOptions to relaunch an app at boot, the android setup (none in
+  MainActivity) and TekartikKioskMock for tests.
 ---
 
 # Kiosk and pinned mode (tekartik_kiosk)
@@ -20,8 +20,8 @@ skill [tekartik-kiosk-packages](../tekartik-kiosk-packages/SKILL.md).
 
 ## Guidelines
 
-* The package lives in a private repository and is not on pub.dev; depend on
-  it from git:
+* The package lives in a public git repository and is not on pub.dev;
+  depend on it from git:
 
   ```yaml
   dependencies:
@@ -51,30 +51,19 @@ skill [tekartik-kiosk-packages](../tekartik-kiosk-packages/SKILL.md).
 * Hold the plugin through the `TekartikKiosk` interface
   (`TekartikKiosk kiosk = tekartikKioskPlugin;`): `tekartikKioskPlugin` is a
   plain top level variable, so a test can swap in a `TekartikKioskMock`.
-* Android wiring in the **app** (not the plugin): the watchdog needs the
-  activity class to relaunch, so the app `MainActivity` must register it:
-
-  ```kotlin
-  package com.example.myapp
-
-  import android.os.Bundle
-  import com.tekartik.kiosk.KioskService
-  import io.flutter.embedding.android.FlutterActivity
-
-  class MainActivity : FlutterActivity() {
-      override fun onCreate(savedInstanceState: Bundle?) {
-          super.onCreate(savedInstanceState)
-          KioskService.setStartClass(this.javaClass)
-      }
-  }
-  ```
-
-  The plugin manifest already declares `KioskService`, the `BootReceiver` and
-  the `GET_TASKS`, `QUERY_ALL_PACKAGES`, `RECEIVE_BOOT_COMPLETED`,
-  `WRITE_SETTINGS`, `READ_PHONE_STATE`, `PACKAGE_USAGE_STATS` and
-  `SYSTEM_ALERT_WINDOW` permissions, so the app manifest needs nothing extra.
+* No Android wiring in the app: the plugin manifest already declares
+  `KioskService`, the `BootReceiver` and the `GET_TASKS`,
+  `QUERY_ALL_PACKAGES`, `RECEIVE_BOOT_COMPLETED`, `WRITE_SETTINGS`,
+  `READ_PHONE_STATE`, `PACKAGE_USAGE_STATS` and `SYSTEM_ALERT_WINDOW`
+  permissions, and the app is relaunched with its launch intent.
+  `KioskService.setStartClass` (in old docs) stores a class nobody reads.
+* A native error is a `PlatformException` (since 2026-11-09; before, a
+  handled native error, such as `getModeInfo()` or `startPinnedMode()`
+  without an activity, left the Dart call pending for ever).
 * Kiosk mode (`startKioskMode({options})` / `stopKioskMode()`) starts a
-  foreground watchdog service that polls the foreground package every
+  watchdog service (a started service, not a foreground one: Android may
+  stop it while the kiosk app is in the background) that polls the
+  foreground package every
   `KioskOptions.checkDelayMs` milliseconds (default
   `kioskCheckDelayMsDefault`, 400) and relaunches `KioskOptions.package`
   whenever something else shows up. The kiosk app itself and the `android`
@@ -96,9 +85,11 @@ skill [tekartik-kiosk-packages](../tekartik-kiosk-packages/SKILL.md).
   the system "app pinned" toast and, unless the device is owned by a device
   policy, the user can leave it with back+recents. It is independent of kiosk
   mode; the two can be combined.
-* `getModeInfo()` returns a `ModeInfo` with `kioskOn` (watchdog service
-  running), `pinnedOn` (screen pinning active) and `pinnedSupported`; poll it
-  to drive a toggle in the ui rather than keeping your own flag.
+* `getModeInfo()` returns a `ModeInfo` with `kioskOn` (kiosk mode started by
+  this process: an in-memory flag, false after a process restart even if the
+  service runs again), `pinnedOn` (screen pinning active) and
+  `pinnedSupported`; poll it to drive a toggle in the ui. It needs an
+  activity (a `PlatformException` without one).
 * Boot: `setBootReceiverOptions(BootReceiverOptions(package: 'com.x.y'))`
   stores the package the `BOOT_COMPLETED` receiver launches after a reboot,
   `BootReceiverOptions(package: null)` clears it, `getBootReceiverOptions()`
@@ -117,9 +108,8 @@ skill [tekartik-kiosk-packages](../tekartik-kiosk-packages/SKILL.md).
 * Anti-patterns: calling `startKioskMode` without the usage stats and overlay
   permissions; a `Timer` loop in dart relaunching the app instead of the
   native watchdog (dart stops running once the app is in the background);
-  forgetting `KioskService.setStartClass` in `MainActivity` (nothing is
-  relaunched); a `checkDelayMs` of a few milliseconds (it is a polling thread
-  and it drains the battery).
+  a `checkDelayMs` of a few milliseconds (it is a polling thread and it
+  drains the battery, values below 50 are raised to 50).
 
 ## Examples
 

@@ -1,7 +1,6 @@
-// You have generated a new plugin project without
-// specifying the `--platforms` flag. A plugin project supports no platforms is generated.
-// To add platforms, run `flutter create -t plugin --platforms <platforms> .` under the same
-// directory. You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
+/// The Android kiosk plugin: [tekartikKioskPlugin] (the API is in
+/// `tekartik_kiosk_api.dart`).
+library;
 
 import 'dart:async';
 
@@ -10,9 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk_api.dart';
 
-// Default implementation uses plugin
+/// The plugin instance (Android only), a variable so that a test can set a
+/// fake (see `TekartikKioskMockMixin`).
 TekartikKiosk tekartikKioskPlugin = TekartikKioskPlugin();
 
+/// [TekartikKiosk] over the `tekartik_kiosk` method channel: a native error
+/// is a `PlatformException`, an unexpected result an `ArgumentError`.
 class TekartikKioskPlugin implements TekartikKiosk {
   static const MethodChannel _channel = MethodChannel('tekartik_kiosk');
 
@@ -61,14 +63,12 @@ class TekartikKioskPlugin implements TekartikKiosk {
   Future<PermissionInfo> getPermissionInfo() =>
       _invokeMap('getPermissionInfo', (map) => PermissionInfo()..fromMap(map));
 
-  /// The response is returned right away so you need polling on the permission
   @override
   Future<PermissionInfo> requestPermissionForUsageStat() => _invokeMap(
     'requestPermissionForUsageStat',
     (map) => PermissionInfo()..fromMap(map),
   );
 
-  /// The response is returned right away so you need polling on the permission
   @override
   Future<PermissionInfo> requestOverlayPermission() => _invokeMap(
     'requestOverlayPermission',

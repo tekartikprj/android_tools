@@ -1,7 +1,6 @@
-// You have generated a new plugin project without
-// specifying the `--platforms` flag. A plugin project supports no platforms is generated.
-// To add platforms, run `flutter create -t plugin --platforms <platforms> .` under the same
-// directory. You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
+/// The kiosk API ([TekartikKiosk]), its option and info classes, and
+/// [TekartikKioskMockMixin] for test fakes.
+library;
 
 // ignore: unnecessary_import, depend_on_referenced_packages
 import 'package:tekartik_common_utils/bool_utils.dart';
@@ -191,20 +190,23 @@ class PermissionInfo {
   String toString() => toMap().toString();
 }
 
+/// The kiosk API, implemented by `tekartikKioskPlugin` (Android only).
 abstract class TekartikKiosk {
-  /// Current Running package
+  /// Current Running package (needs the usage stats permission)
   Future<RunningPackageInfo> getCurrentRunningPackageInfo();
 
   /// List running processes with details
   Future<List<RunningProcessInfo>> getRunningProcesses();
 
-  /// Permissin info (needed before calling getCurrentRunningPackageInfo)
+  /// Permission info (needed before calling getCurrentRunningPackageInfo)
   Future<PermissionInfo> getPermissionInfo();
 
-  /// TODO result might be available later
+  /// Opens the usage stats settings; the result does not wait for the
+  /// user's choice: poll [getPermissionInfo].
   Future<PermissionInfo> requestPermissionForUsageStat();
 
-  /// The response is returned right away so you need polling on the permission
+  /// Opens the overlay permission settings; do not trust the result: poll
+  /// [getPermissionInfo].
   Future<PermissionInfo> requestOverlayPermission();
 
   /// Get package info, current if packageName is null, throw if not found

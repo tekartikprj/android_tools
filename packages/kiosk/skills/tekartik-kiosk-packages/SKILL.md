@@ -17,7 +17,7 @@ manager and usage stats: which app is in the foreground, what is installed,
 and launching any of them by package name. Locking the app to the foreground
 is in the sibling skill
 [tekartik-kiosk-mode](../tekartik-kiosk-mode/SKILL.md), which also has the
-dependency block and the android `MainActivity` wiring.
+dependency block (no android wiring is needed in the app).
 
 ## Guidelines
 
@@ -32,10 +32,13 @@ dependency block and the android `MainActivity` wiring.
   by the kiosk watchdog) and `needOverlayPermission` (needed to bring an app
   to the front from the background).
 * `requestPermissionForUsageStat()` and `requestOverlayPermission()` open the
-  corresponding android settings screen and return **immediately** with the
-  permission state as it was: the user grants it in another activity, so poll
+  corresponding android settings screen and return the permission state of
+  an activity result (the usage stats screen is started in a new task, so
+  that result comes **immediately**, before the user chose): poll
   `getPermissionInfo()` (for instance on app resume, or every second for a
   few seconds) instead of trusting the returned value.
+* A native error is a `PlatformException` (since 2026-11-09; before, a
+  handled native error left the Dart call pending for ever).
 * `getCurrentRunningPackageInfo()` returns a `RunningPackageInfo` whose
   `package` is the foreground app package name (null when unknown). It is a
   poll, there is no stream: loop with a `Future.delayed` of a second or so and

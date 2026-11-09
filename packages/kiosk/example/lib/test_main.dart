@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_kiosk/tekartik_kiosk.dart';
@@ -22,6 +23,19 @@ void main() {
       item('getPermissionInfo', () async {
         var info = await kiosk.getPermissionInfo();
         write(jsonPretty(info.toMap()));
+      });
+      item('native error reply (setDevMode without argument)', () async {
+        // The native handler fails (no 'debug' argument): expect a
+        // PlatformException at once (the call never completed before
+        // 2026-11-09).
+        try {
+          await const MethodChannel(
+            'tekartik_kiosk',
+          ).invokeMethod<void>('setDevMode');
+          write('no error');
+        } on PlatformException catch (e) {
+          write('PlatformException: ${e.code} ${e.message}');
+        }
       });
       item('requestPermissionInfo', () async {
         var info = await kiosk.requestPermissionForUsageStat();
