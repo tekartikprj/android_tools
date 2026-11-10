@@ -7,12 +7,27 @@ class _FakeKiosk with TekartikKioskMockMixin implements TekartikKiosk {
   var installedCalls = 0;
   var processCalls = 0;
 
+  /// The options saved by a previous start.
+  var storedOptions = KioskOptions();
+  BootReceiverOptions? bootOptions;
+  KioskOptions? startedOptions;
+
   @override
   Future<PackageInfo> getPackageInfo({String? packageName}) async =>
       PackageInfo()..package = 'com.self';
 
   @override
-  Future<KioskOptions> getKioskOptions() async => KioskOptions();
+  Future<KioskOptions> getKioskOptions() async => storedOptions;
+
+  @override
+  Future<void> setBootReceiverOptions(BootReceiverOptions options) async {
+    bootOptions = options;
+  }
+
+  @override
+  Future<void> startKioskMode({KioskOptions? options}) async {
+    startedOptions = options;
+  }
 
   @override
   Future<ModeInfo> getModeInfo() async => ModeInfo()
@@ -123,6 +138,46 @@ void main() {
     await tester.pump();
     expect(fake.processCalls, 2);
     expect(find.text('1 Running Processes'), findsOneWidget);
+
+    await close(tester);
+  });
+
+  testWidgets('a toggle keeps the options being typed', (tester) async {
+    fake.storedOptions = KioskOptions(
+      package: 'com.stored',
+      checkDelayMs: 500,
+      allowedPackages: ['com.stored.allowed'],
+    );
+    await tester.pumpWidget(const app.MyApp());
+    await tester.pump();
+    final packageField = find.widgetWithText(TextField, 'Target Package Name');
+    final delayField = find.widgetWithText(TextField, 'Watchdog Delay (ms)');
+    String text(Finder field) =>
+        tester.widget<TextField>(field).controller!.text;
+    expect(text(packageField), 'com.stored');
+
+    // Typed, not started yet.
+    await tester.enterText(packageField, 'com.typed');
+    await tester.enterText(delayField, '800');
+
+    // Launch on boot: the package typed, and the fields keep what was typed.
+    final boot = find.widgetWithText(SwitchListTile, 'Launch on Boot');
+    await tester.ensureVisible(boot);
+    await tester.tap(boot);
+    await tester.pump();
+    await tester.pump();
+    expect(fake.bootOptions?.package, 'com.typed');
+    expect(text(packageField), 'com.typed');
+    expect(text(delayField), '800');
+
+    // Started with what was typed.
+    final start = find.text('START KIOSK');
+    await tester.ensureVisible(start);
+    await tester.tap(start);
+    await tester.pump();
+    await tester.pump();
+    expect(fake.startedOptions?.package, 'com.typed');
+    expect(fake.startedOptions?.checkDelayMs, 800);
 
     await close(tester);
   });

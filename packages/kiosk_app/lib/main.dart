@@ -96,25 +96,30 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
     super.dispose();
   }
 
-  Future<void> _loadState() async {
+  /// Loads the state; [fields] also fills the option fields with the saved
+  /// kiosk options (at start, on refresh and after a start), not after a
+  /// toggle, which would lose what is being typed.
+  Future<void> _loadState({bool fields = true}) async {
     try {
-      // Load current package info to fill default target package
-      var selfInfo = await kiosk.getPackageInfo();
-      if (_packageController.text.isEmpty) {
-        _packageController.text = selfInfo.package ?? '';
-      }
+      if (fields) {
+        // Load current package info to fill default target package
+        var selfInfo = await kiosk.getPackageInfo();
+        if (_packageController.text.isEmpty) {
+          _packageController.text = selfInfo.package ?? '';
+        }
 
-      // Load kiosk options
-      var options = await kiosk.getKioskOptions();
-      if (options.package != null) {
-        _packageController.text = options.package!;
-      }
-      if (options.checkDelayMs != null) {
-        _delayController.text = options.checkDelayMs.toString();
-      }
-      if (options.allowedPackages != null &&
-          options.allowedPackages!.isNotEmpty) {
-        _allowedController.text = options.allowedPackages!.join(', ');
+        // Load kiosk options
+        var options = await kiosk.getKioskOptions();
+        if (options.package != null) {
+          _packageController.text = options.package!;
+        }
+        if (options.checkDelayMs != null) {
+          _delayController.text = options.checkDelayMs.toString();
+        }
+        if (options.allowedPackages != null &&
+            options.allowedPackages!.isNotEmpty) {
+          _allowedController.text = options.allowedPackages!.join(', ');
+        }
       }
 
       // Load mode info
@@ -236,7 +241,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
   Future<void> _stopKiosk() async {
     try {
       await kiosk.stopKioskMode();
-      await _loadState();
+      await _loadState(fields: false);
       if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Kiosk Mode stopped')));
@@ -378,7 +383,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                     } else {
                       await kiosk.stopPinnedMode();
                     }
-                    await _loadState();
+                    await _loadState(fields: false);
                   } catch (e) {
                     if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -510,7 +515,7 @@ class _KioskDashboardPageState extends State<KioskDashboardPage> {
                         await kiosk.setBootReceiverOptions(
                           BootReceiverOptions()..package = pkg,
                         );
-                        await _loadState();
+                        await _loadState(fields: false);
                       } catch (e) {
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
