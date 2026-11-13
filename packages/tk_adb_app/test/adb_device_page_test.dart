@@ -16,8 +16,16 @@ class _FakeAdbDeviceShell implements AdbDeviceShell {
   /// Packages whose uninstall fails.
   final failing = <String>{};
 
+  /// True to make the next listings fail (the device gone).
+  var listFails = false;
+
   @override
-  Future<List<AdbPackageInfo>> listPackages() async => [...packages];
+  Future<List<AdbPackageInfo>> listPackages() async {
+    if (listFails) {
+      throw StateError('device offline');
+    }
+    return [...packages];
+  }
 
   @override
   Future<void> uninstall(String package) async {
@@ -135,6 +143,29 @@ void main() {
     expect(shell.uninstalled, ['com.example.a', 'com.example.c']);
     expect(find.textContaining('2 uninstalled, 1 failed'), findsOneWidget);
   });
+
+  testWidgets('a failed listing after the uninstall does not lock the page', (
+    tester,
+  ) async {
+    await pumpPage(tester);
+    await tester.longPress(find.text('com.example.a'));
+    await tester.pumpAndSettle();
+    // The device goes away during the uninstall.
+    shell.listFails = true;
+    await uninstallSelected(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Uninstall'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(shell.uninstalled, ['com.example.a']);
+    // Back to the normal mode (was stuck on "Uninstalling 1/1", every
+    // button disabled, back refused), the error reported.
+    expect(find.text('Device'), findsOneWidget);
+    expect(find.textContaining('device offline'), findsOneWidget);
+  }, timeout: const Timeout(Duration(seconds: 30)));
 
   testWidgets('cancel keeps the packages and the selection', (tester) async {
     await pumpPage(tester);

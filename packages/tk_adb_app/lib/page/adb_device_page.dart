@@ -216,14 +216,23 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
       return;
     }
     setState(() => _uninstalling = (0, count));
-    var failures = await _bloc.uninstallPackages(
-      packages,
-      onProgress: (done) {
-        if (mounted) {
-          setState(() => _uninstalling = (done, count));
-        }
-      },
-    );
+    List<AdbUninstallException> failures;
+    Object? error;
+    try {
+      failures = await _bloc.uninstallPackages(
+        packages,
+        onProgress: (done) {
+          if (mounted) {
+            setState(() => _uninstalling = (done, count));
+          }
+        },
+      );
+    } catch (e) {
+      // Reading the packages again failed (the device gone): the page must
+      // not stay busy, every button disabled and back refused.
+      failures = const [];
+      error = e;
+    }
     if (!mounted) {
       return;
     }
@@ -232,6 +241,10 @@ class _AdbDevicePageState extends State<AdbDevicePage> {
       _selecting = false;
       _selected.clear();
     });
+    if (error != null) {
+      _snack('Uninstall: $error');
+      return;
+    }
     var done = count - failures.length;
     if (failures.isEmpty) {
       _snack(
